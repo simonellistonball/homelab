@@ -34,3 +34,37 @@ mountOptions:
   - nfsvers=4.1
   - hard
   - noatime
+
+---
+# NFS Storage Class for backups
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-backups
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: TRUENAS_IP_PLACEHOLDER
+  share: /mnt/data/backups
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - hard
+  - noatime
+
+---
+# NFS Storage Class for archive
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-archive
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: TRUENAS_IP_PLACEHOLDER
+  share: /mnt/data/archive
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - hard
+  - noatime
