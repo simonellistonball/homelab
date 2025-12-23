@@ -12,7 +12,7 @@ gitea:
       SSH_DOMAIN: gitea.apps.house.simonellistonball.com
     database:
       DB_TYPE: postgres
-      HOST: 192.168.1.103:5432
+      HOST: POSTGRES_HOST_PLACEHOLDER:5432
       NAME: gitea
       USER: gitea
       PASSWD: POSTGRES_GITEA_PASSWORD_PLACEHOLDER
@@ -61,7 +61,7 @@ service:
   ssh:
     type: LoadBalancer
     port: 22
-    loadBalancerIP: 192.168.100.122
+    loadBalancerIP: GITEA_SSH_IP_PLACEHOLDER
 
 # Ingress disabled - using Traefik IngressRoute
 ingress:

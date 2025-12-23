@@ -28,9 +28,15 @@ kubectl get secret intermediate-ca-secret -n cert-manager -o yaml | \
 echo "Waiting for certificate to be ready..."
 sleep 10
 
+# Substitute config values in deployment
+TMP_DEPLOY=$(mktemp)
+trap "rm -f $TMP_DEPLOY" EXIT
+
+sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" "${SCRIPT_DIR}/deployment.yaml" > "$TMP_DEPLOY"
+
 # Apply resources
 kubectl apply -f pvc.yaml
-kubectl apply -f deployment.yaml
+kubectl apply -f "$TMP_DEPLOY"
 kubectl apply -f service.yaml
 kubectl apply -f ingressroute.yaml
 

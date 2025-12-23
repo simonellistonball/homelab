@@ -21,7 +21,8 @@ sleep 10
 
 # Substitute passwords in values.yaml
 cat values.yaml | \
-  sed "s/POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER/${POSTGRES_DAGSTER_PASSWORD}/g" \
+  sed "s/POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER/${POSTGRES_DAGSTER_PASSWORD}/g" | \
+  sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" \
   > /tmp/dagster-values.yaml
 
 # Install Dagster

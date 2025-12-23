@@ -56,7 +56,14 @@ helm repo update cilium
 TMP_VALUES=$(mktemp)
 trap "rm -f $TMP_VALUES" EXIT
 
-sed "s/K8S_NODE_IP_PLACEHOLDER/${K8S_NODE_IP}/g" "${SCRIPT_DIR}/values.yaml" > "$TMP_VALUES"
+# Default pod CIDRs if not set
+POD_CIDR_V4="${POD_CIDR_V4:-10.42.0.0/16}"
+POD_CIDR_V6="${POD_CIDR_V6:-fd00:10:42::/48}"
+
+sed -e "s/K8S_NODE_IP_PLACEHOLDER/${K8S_NODE_IP}/g" \
+    -e "s|POD_CIDR_V4_PLACEHOLDER|${POD_CIDR_V4}|g" \
+    -e "s|POD_CIDR_V6_PLACEHOLDER|${POD_CIDR_V6}|g" \
+    "${SCRIPT_DIR}/values.yaml" > "$TMP_VALUES"
 
 # Check if Cilium is already installed
 if helm status cilium -n ${NAMESPACE} &>/dev/null; then

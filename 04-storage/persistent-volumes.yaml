@@ -11,7 +11,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-surveillance
   nfs:
-    server: 192.168.1.101
+    server: TRUENAS_IP_PLACEHOLDER
     path: /mnt/surveillance/frigate
 ---
 # HuggingFace cache for ML models (shared across namespaces)

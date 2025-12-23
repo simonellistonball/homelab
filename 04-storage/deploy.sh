@@ -26,10 +26,18 @@ helm upgrade --install csi-driver-nfs csi-driver-nfs/csi-driver-nfs \
   --wait
 
 echo "Creating NFS storage classes..."
-kubectl apply -f storage-classes.yaml
+# Substitute config values
+TMP_SC=$(mktemp)
+TMP_PV=$(mktemp)
+trap "rm -f $TMP_SC $TMP_PV" EXIT
+
+sed "s/TRUENAS_IP_PLACEHOLDER/${TRUENAS_IP}/g" "${SCRIPT_DIR}/storage-classes.yaml" > "$TMP_SC"
+sed "s/TRUENAS_IP_PLACEHOLDER/${TRUENAS_IP}/g" "${SCRIPT_DIR}/persistent-volumes.yaml" > "$TMP_PV"
+
+kubectl apply -f "$TMP_SC"
 
 echo "Creating persistent volumes..."
-kubectl apply -f persistent-volumes.yaml
+kubectl apply -f "$TMP_PV"
 
 echo "Storage configuration complete!"
 echo ""

@@ -22,7 +22,8 @@ sleep 10
 # Substitute passwords in values.yaml
 cat values.yaml | \
   sed "s/HARBOR_ADMIN_PASSWORD_PLACEHOLDER/${HARBOR_ADMIN_PASSWORD}/g" | \
-  sed "s/POSTGRES_HARBOR_PASSWORD_PLACEHOLDER/${POSTGRES_HARBOR_PASSWORD}/g" \
+  sed "s/POSTGRES_HARBOR_PASSWORD_PLACEHOLDER/${POSTGRES_HARBOR_PASSWORD}/g" | \
+  sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" \
   > /tmp/harbor-values.yaml
 
 # Install Harbor

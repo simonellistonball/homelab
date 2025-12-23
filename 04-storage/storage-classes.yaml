@@ -9,7 +9,7 @@ metadata:
   name: nfs-data
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 192.168.1.101
+  server: TRUENAS_IP_PLACEHOLDER
   share: /mnt/tank/k8s-data
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
@@ -26,7 +26,7 @@ metadata:
   name: nfs-surveillance
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 192.168.1.101
+  server: TRUENAS_IP_PLACEHOLDER
   share: /mnt/tank/surveillance
 reclaimPolicy: Retain
 volumeBindingMode: Immediate

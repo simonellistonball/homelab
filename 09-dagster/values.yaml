@@ -4,7 +4,7 @@
 # Disable bundled PostgreSQL (using external)
 postgresql:
   enabled: false
-  postgresqlHost: 192.168.1.103
+  postgresqlHost: POSTGRES_HOST_PLACEHOLDER
   postgresqlPort: 5432
   postgresqlUsername: dagster
   postgresqlPassword: POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER

@@ -13,7 +13,7 @@ expose:
 database:
   type: external
   external:
-    host: 192.168.1.103
+    host: POSTGRES_HOST_PLACEHOLDER
     port: "5432"
     username: harbor
     password: POSTGRES_HARBOR_PASSWORD_PLACEHOLDER

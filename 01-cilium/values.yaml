@@ -25,14 +25,14 @@ ipam:
   mode: kubernetes
   operator:
     clusterPoolIPv4PodCIDRList:
-      - "10.42.0.0/16"
+      - "POD_CIDR_V4_PLACEHOLDER"
     clusterPoolIPv6PodCIDRList:
-      - "fd00:10:42::/48"
+      - "POD_CIDR_V6_PLACEHOLDER"
 
 # Enable native routing (better performance than tunneling)
 routingMode: native
-ipv4NativeRoutingCIDR: "10.42.0.0/16"
-ipv6NativeRoutingCIDR: "fd00:10:42::/48"
+ipv4NativeRoutingCIDR: "POD_CIDR_V4_PLACEHOLDER"
+ipv6NativeRoutingCIDR: "POD_CIDR_V6_PLACEHOLDER"
 autoDirectNodeRoutes: true
 
 # BPF settings

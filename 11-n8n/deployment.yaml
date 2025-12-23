@@ -37,7 +37,7 @@ spec:
             - name: DB_TYPE
               value: postgresdb
             - name: DB_POSTGRESDB_HOST
-              value: "192.168.1.103"
+              value: "POSTGRES_HOST_PLACEHOLDER"
             - name: DB_POSTGRESDB_PORT
               value: "5432"
             - name: DB_POSTGRESDB_DATABASE
