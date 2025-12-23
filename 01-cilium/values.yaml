@@ -21,13 +21,9 @@ ipv6:
   enabled: true
 
 # IPAM configuration for dual-stack
+# Note: K3s manages pod CIDR allocation, Cilium uses kubernetes IPAM mode
 ipam:
   mode: kubernetes
-  operator:
-    clusterPoolIPv4PodCIDRList:
-      - "POD_CIDR_V4_PLACEHOLDER"
-    clusterPoolIPv6PodCIDRList:
-      - "POD_CIDR_V6_PLACEHOLDER"
 
 # Enable native routing (better performance than tunneling)
 routingMode: native
