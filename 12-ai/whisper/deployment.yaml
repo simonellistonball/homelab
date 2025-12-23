@@ -52,6 +52,5 @@ spec:
               mountPath: /cache
       volumes:
         - name: cache
-          hostPath:
-            path: /mnt/nvme-fast/huggingface-cache
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: whisper-models

@@ -1,0 +1,14 @@
+# PVC for Whisper model cache
+# Uses NFS storage to persist downloaded models across restarts
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: whisper-models
+  namespace: whisper
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-models
+  resources:
+    requests:
+      storage: 50Gi

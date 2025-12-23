@@ -41,6 +41,7 @@ kubectl create secret docker-registry harbor-pull \
   --docker-password="${HARBOR_ADMIN_PASSWORD}" \
   --dry-run=client -o yaml | kubectl apply -f -
 
+kubectl apply -f whisper/pvc.yaml
 kubectl apply -f whisper/deployment.yaml
 kubectl apply -f whisper/service.yaml
 kubectl apply -f whisper/ingressroute.yaml
