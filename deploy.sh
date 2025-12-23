@@ -109,7 +109,7 @@ main() {
 
     # Deploy in order
     deploy_component "${SCRIPT_DIR}/00-namespaces"
-    deploy_component "${SCRIPT_DIR}/01-metallb"
+    deploy_component "${SCRIPT_DIR}/01-cilium"
     deploy_component "${SCRIPT_DIR}/02-traefik"
     deploy_component "${SCRIPT_DIR}/03-cert-manager"
     deploy_component "${SCRIPT_DIR}/04-storage"

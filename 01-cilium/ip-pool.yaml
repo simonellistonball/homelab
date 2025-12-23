@@ -1,0 +1,42 @@
+# Cilium LoadBalancer IP Pool - Dual Stack
+# Replaces MetalLB IPAddressPool
+#
+# IPv4 Range: 192.168.100.100-192.168.100.227 (/25 = 128 addresses)
+# IPv6 Range: 2a0e:cb01:f1:1001::/64 (public IPv6 for ingress)
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: homelab-pool-v4
+spec:
+  blocks:
+    - cidr: "CILIUM_LB_POOL_V4_PLACEHOLDER"
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium/lb-ipam-ips
+        operator: DoesNotExist
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: homelab-pool-v6
+spec:
+  blocks:
+    - cidr: "CILIUM_LB_POOL_V6_PLACEHOLDER"
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium/lb-ipam-ips
+        operator: DoesNotExist
+---
+# Pool for Traefik with specific IPs (dual-stack)
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: traefik-pool
+spec:
+  blocks:
+    - cidr: "TRAEFIK_IP_PLACEHOLDER/32"
+    - cidr: "TRAEFIK_IP_V6_PLACEHOLDER/128"
+  serviceSelector:
+    matchLabels:
+      app.kubernetes.io/name: traefik

@@ -1,0 +1,25 @@
+# Cilium L2 Announcement Policy
+# Replaces MetalLB L2Advertisement
+#
+# This enables ARP/NDP responses for LoadBalancer service IPs
+# so they are reachable on the local network.
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: homelab-l2
+spec:
+  # Announce LoadBalancer IPs
+  loadBalancerIPs: true
+  # Announce ExternalIPs
+  externalIPs: true
+  # Network interfaces to use for announcements
+  # Matches common Linux interface naming patterns
+  interfaces:
+    - ^eth[0-9]+      # eth0, eth1, etc.
+    - ^en[opsx][0-9]+ # enp0s3, ens3, enx*, eno*
+    - ^eno[0-9]+      # eno1, eno2 (embedded NICs)
+    - ^bond[0-9]+     # bond0, bond1 (bonded interfaces)
+    - ^br[0-9]+       # br0, br1 (bridges)
+  # Service selector (all services by default)
+  # serviceSelector: {}

@@ -22,7 +22,13 @@ service:
   enabled: true
   type: LoadBalancer
   spec:
-    loadBalancerIP: 192.168.100.111
+    # Dual-stack: request both IPv4 and IPv6 addresses
+    ipFamilyPolicy: PreferDualStack
+    ipFamilies:
+      - IPv4
+      - IPv6
+    # Note: loadBalancerIP only supports single IP; Cilium IP pools
+    # with serviceSelector will assign both IPs based on label match
 
 ports:
   web:
