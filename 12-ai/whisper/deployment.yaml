@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whisper
+  namespace: whisper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whisper
+  template:
+    metadata:
+      labels:
+        app: whisper
+    spec:
+      imagePullSecrets:
+        - name: harbor-pull
+      containers:
+        - name: whisper
+          # Use your own whisper image from Harbor, or a public one
+          image: harbor.apps.house.simonellistonball.com/library/whisper-server:v4
+          # Alternative: use a public image
+          # image: onerahmet/openai-whisper-asr-webservice:latest
+          env:
+            - name: WHISPER_MODEL
+              value: small  # Options: tiny, base, small, medium, large
+            - name: HF_HOME
+              value: /cache
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "2"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 4Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          volumeMounts:
+            - name: cache
+              mountPath: /cache
+      volumes:
+        - name: cache
+          hostPath:
+            path: /mnt/nvme-fast/huggingface-cache
+            type: DirectoryOrCreate

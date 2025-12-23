@@ -1,0 +1,70 @@
+# kube-prometheus-stack values
+# Passwords are substituted by deploy.sh from config.env
+
+# Grafana configuration
+grafana:
+  adminPassword: GRAFANA_ADMIN_PASSWORD_PLACEHOLDER
+  grafana.ini:
+    server:
+      root_url: https://grafana.apps.house.simonellistonball.com
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClassName: local-path
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.monitoring.svc.cluster.local:3100
+      isDefault: false
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
+# Prometheus configuration
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+# Alertmanager configuration
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+
+# Component toggles
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+# Disable rules for components not in K3s
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    kubeProxy: false
+    kubeScheduler: false

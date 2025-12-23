@@ -1,0 +1,66 @@
+# ============================================
+# Secrets and credentials - NEVER commit these
+# ============================================
+
+# Main config file with passwords
+config.env
+config.env.local
+
+# Generated SQL with passwords
+scripts/postgres-setup.sql
+
+# Any secret files
+*.secret
+*.secrets
+*-secret.yaml
+*-secrets.yaml
+
+# Generated password files
+passwords.txt
+passwords.env
+*.passwords
+
+# Temporary helm values (may contain substituted passwords)
+/tmp/
+*.tmp
+
+# ============================================
+# Backup of original cluster (may contain secrets)
+# ============================================
+# Uncomment if you want to exclude backup from git:
+# backup/
+
+# ============================================
+# OS and editor files
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors
+*.swp
+*.swo
+*.swn
+.idea/
+.vscode/
+*.sublime-*
+.project
+.settings/
+
+# ============================================
+# Kubernetes generated files
+# ============================================
+*.kubeconfig
+kubeconfig

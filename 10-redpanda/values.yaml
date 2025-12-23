@@ -1,0 +1,41 @@
+# Redpanda Helm values
+
+# Single node for homelab
+statefulset:
+  replicas: 1
+
+# Storage configuration
+storage:
+  persistentVolume:
+    enabled: true
+    size: 50Gi
+    storageClass: nvme-fast
+
+# Resource configuration
+resources:
+  cpu:
+    cores: 2
+  memory:
+    container:
+      max: 4Gi
+
+# TLS configuration
+tls:
+  enabled: true
+  certs:
+    default:
+      secretRef:
+        name: redpanda-tls-internal
+
+# External access
+external:
+  enabled: false
+
+# Console
+console:
+  enabled: true
+
+# Monitoring
+monitoring:
+  enabled: true
+  scrapeInterval: 30s

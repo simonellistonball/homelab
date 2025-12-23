@@ -1,0 +1,53 @@
+# Harbor Helm values
+# Passwords are substituted by deploy.sh from config.env
+
+externalURL: https://harbor.apps.house.simonellistonball.com
+harborAdminPassword: HARBOR_ADMIN_PASSWORD_PLACEHOLDER
+
+expose:
+  type: clusterIP
+  tls:
+    enabled: false  # TLS handled by Traefik
+
+# External PostgreSQL
+database:
+  type: external
+  external:
+    host: 192.168.1.103
+    port: "5432"
+    username: harbor
+    password: POSTGRES_HARBOR_PASSWORD_PLACEHOLDER
+    coreDatabase: harbor
+    notaryServerDatabase: harbor_notary_server
+    notarySignerDatabase: harbor_notary_signer
+
+# Use internal Redis for simplicity
+redis:
+  type: internal
+
+persistence:
+  enabled: true
+  persistentVolumeClaim:
+    registry:
+      storageClass: nvme-fast
+      size: 100Gi
+    jobservice:
+      storageClass: nvme-fast
+      size: 5Gi
+    trivy:
+      storageClass: nvme-fast
+      size: 5Gi
+
+# Enable Trivy vulnerability scanning
+trivy:
+  enabled: true
+
+# Disable Notary (deprecated)
+notary:
+  enabled: false
+
+# Enable metrics
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

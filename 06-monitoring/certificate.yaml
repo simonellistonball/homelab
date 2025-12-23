@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: monitoring-cert
+  namespace: monitoring
+spec:
+  secretName: monitoring-tls
+  commonName: grafana.apps.house.simonellistonball.com
+  dnsNames:
+    - grafana.apps.house.simonellistonball.com
+    - prometheus.apps.house.simonellistonball.com
+    - alertmanager.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball

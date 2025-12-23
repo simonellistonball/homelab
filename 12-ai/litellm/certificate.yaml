@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ai-cert
+  namespace: ai
+spec:
+  secretName: ai-tls
+  commonName: llm.apps.house.simonellistonball.com
+  dnsNames:
+    - llm.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball

@@ -1,0 +1,47 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: redpanda-cert
+  namespace: redpanda
+spec:
+  secretName: redpanda-tls
+  commonName: redpanda.apps.house.simonellistonball.com
+  dnsNames:
+    - redpanda.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: redpanda-console-cert
+  namespace: redpanda
+spec:
+  secretName: redpanda-console-tls
+  commonName: redpanda.apps.house.simonellistonball.com
+  dnsNames:
+    - redpanda.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: redpanda-internal-cert
+  namespace: redpanda
+spec:
+  secretName: redpanda-tls-internal
+  commonName: redpanda.redpanda.svc.cluster.local
+  dnsNames:
+    - redpanda.redpanda.svc.cluster.local
+    - redpanda-0.redpanda.redpanda.svc.cluster.local
+    - "*.redpanda.redpanda.svc.cluster.local"
+    - redpanda.apps.house.simonellistonball.com
+    - localhost
+  ipAddresses:
+    - 127.0.0.1
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer

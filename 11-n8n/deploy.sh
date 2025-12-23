@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../config.env"
+
+echo "Deploying n8n..."
+
+# Create namespace
+kubectl create namespace n8n --dry-run=client -o yaml | kubectl apply -f -
+
+# Create certificate first
+kubectl apply -f certificate.yaml
+
+# Create secrets
+kubectl create secret generic n8n-secrets \
+  --namespace n8n \
+  --from-literal=DB_POSTGRESDB_PASSWORD="${POSTGRES_N8N_PASSWORD}" \
+  --from-literal=N8N_ENCRYPTION_KEY="${N8N_ENCRYPTION_KEY}" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Create root CA secret for HTTPS calls
+kubectl get secret intermediate-ca-secret -n cert-manager -o yaml | \
+  sed 's/namespace: cert-manager/namespace: n8n/' | \
+  sed 's/name: intermediate-ca-secret/name: root-ca/' | \
+  kubectl apply -f -
+
+echo "Waiting for certificate to be ready..."
+sleep 10
+
+# Apply resources
+kubectl apply -f pvc.yaml
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingressroute.yaml
+
+echo "Waiting for n8n to be ready..."
+kubectl wait --namespace n8n \
+  --for=condition=ready pod \
+  --selector=app=n8n \
+  --timeout=300s || echo "n8n may take a while to start on first run"
+
+echo "n8n deployed!"
+echo ""
+echo "Access URL: https://n8n.apps.house.simonellistonball.com"

@@ -1,0 +1,288 @@
+# Local Path Provisioner Configuration for K3s with Multiple Drives
+#
+# K3s's built-in local-path provisioner doesn't support multiple paths
+# per StorageClass. This file deploys additional provisioner instances
+# for each drive location.
+#
+# Before applying, ensure these directories exist on your K3s node:
+#   sudo mkdir -p /mnt/nvme-fast
+#   sudo mkdir -p /mnt/scratch
+#   sudo chmod 777 /mnt/nvme-fast /mnt/scratch
+
+---
+# ============================================
+# NVMe Fast Storage Provisioner
+# For databases, caches, and performance-critical workloads
+# ============================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-path-config-nvme
+  namespace: kube-system
+data:
+  config.json: |-
+    {
+      "nodePathMap": [
+        {
+          "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
+          "paths": ["/mnt/nvme-fast"]
+        }
+      ]
+    }
+  setup: |-
+    #!/bin/sh
+    set -eu
+    mkdir -m 0777 -p "$VOL_DIR"
+  teardown: |-
+    #!/bin/sh
+    set -eu
+    rm -rf "$VOL_DIR"
+  helperPod.yaml: |-
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: helper-pod
+    spec:
+      priorityClassName: system-node-critical
+      tolerations:
+        - key: node.kubernetes.io/disk-pressure
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: helper-pod
+          image: busybox:stable
+          imagePullPolicy: IfNotPresent
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: local-path-provisioner-nvme
+  namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: local-path-provisioner-nvme
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumeclaims", "configmaps", "pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-path-provisioner-nvme
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: local-path-provisioner-nvme
+subjects:
+  - kind: ServiceAccount
+    name: local-path-provisioner-nvme
+    namespace: kube-system
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-path-provisioner-nvme
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: local-path-provisioner-nvme
+  template:
+    metadata:
+      labels:
+        app: local-path-provisioner-nvme
+    spec:
+      serviceAccountName: local-path-provisioner-nvme
+      containers:
+        - name: local-path-provisioner
+          image: rancher/local-path-provisioner:v0.0.26
+          command:
+            - local-path-provisioner
+            - --debug
+            - start
+            - --config
+            - /etc/config/config.json
+            - --service-account-name
+            - local-path-provisioner-nvme
+            - --provisioner-name
+            - rancher.io/local-path-nvme
+            - --configmap-name
+            - local-path-config-nvme
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: local-path-config-nvme
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-fast
+provisioner: rancher.io/local-path-nvme
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+
+---
+# ============================================
+# Scratch Storage Provisioner
+# For temporary/ephemeral data
+# ============================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-path-config-scratch
+  namespace: kube-system
+data:
+  config.json: |-
+    {
+      "nodePathMap": [
+        {
+          "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
+          "paths": ["/mnt/scratch"]
+        }
+      ]
+    }
+  setup: |-
+    #!/bin/sh
+    set -eu
+    mkdir -m 0777 -p "$VOL_DIR"
+  teardown: |-
+    #!/bin/sh
+    set -eu
+    rm -rf "$VOL_DIR"
+  helperPod.yaml: |-
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: helper-pod
+    spec:
+      priorityClassName: system-node-critical
+      tolerations:
+        - key: node.kubernetes.io/disk-pressure
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: helper-pod
+          image: busybox:stable
+          imagePullPolicy: IfNotPresent
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: local-path-provisioner-scratch
+  namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: local-path-provisioner-scratch
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumeclaims", "configmaps", "pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-path-provisioner-scratch
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: local-path-provisioner-scratch
+subjects:
+  - kind: ServiceAccount
+    name: local-path-provisioner-scratch
+    namespace: kube-system
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: local-path-provisioner-scratch
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: local-path-provisioner-scratch
+  template:
+    metadata:
+      labels:
+        app: local-path-provisioner-scratch
+    spec:
+      serviceAccountName: local-path-provisioner-scratch
+      containers:
+        - name: local-path-provisioner
+          image: rancher/local-path-provisioner:v0.0.26
+          command:
+            - local-path-provisioner
+            - --debug
+            - start
+            - --config
+            - /etc/config/config.json
+            - --service-account-name
+            - local-path-provisioner-scratch
+            - --provisioner-name
+            - rancher.io/local-path-scratch
+            - --configmap-name
+            - local-path-config-scratch
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: local-path-config-scratch
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: scratch
+provisioner: rancher.io/local-path-scratch
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer

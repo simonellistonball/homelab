@@ -1,0 +1,53 @@
+# Dagster Helm values
+# Passwords are substituted by deploy.sh from config.env
+
+# Disable bundled PostgreSQL (using external)
+postgresql:
+  enabled: false
+  postgresqlHost: 192.168.1.103
+  postgresqlPort: 5432
+  postgresqlUsername: dagster
+  postgresqlPassword: POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER
+  postgresqlDatabase: dagster
+
+# Webserver configuration
+dagsterWebserver:
+  replicaCount: 1
+
+# Daemon configuration
+dagsterDaemon:
+  enabled: true
+
+# Ingress disabled - using Traefik IngressRoute
+ingress:
+  enabled: false
+
+# User code deployments (example - customize as needed)
+dagster-user-deployments:
+  enabled: true
+  enableSubchart: true
+  deployments:
+    - name: osm-pipeline
+      image:
+        repository: harbor.apps.house.simonellistonball.com/dagster/osm-pipeline
+        tag: latest
+        pullPolicy: Always
+      imagePullSecrets:
+        - name: harbor-pull
+      dagsterApiGrpcArgs:
+        - "-m"
+        - "osm_pipeline.definitions"
+      port: 4000
+      includeConfigInLaunchedRuns:
+        enabled: true
+      envConfigMaps:
+        - name: osm-pipeline-storage-config
+      envSecrets:
+        - name: osm-pipeline-postgres-secret
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi

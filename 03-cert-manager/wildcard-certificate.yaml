@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apps-house-wildcard
+  namespace: traefik
+spec:
+  secretName: apps-house-tls
+  commonName: apps.house.simonellistonball.com
+  dnsNames:
+    - "*.apps.house.simonellistonball.com"
+    - apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball

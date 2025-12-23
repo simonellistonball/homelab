@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+  namespace: ai
+data:
+  config.yaml: |
+    # LiteLLM Proxy Configuration
+    # Add your LLM providers here
+
+    model_list:
+      # Example: OpenAI
+      # - model_name: gpt-4
+      #   litellm_params:
+      #     model: openai/gpt-4
+      #     api_key: os.environ/OPENAI_API_KEY
+
+      # Example: Anthropic
+      # - model_name: claude-3-opus
+      #   litellm_params:
+      #     model: anthropic/claude-3-opus-20240229
+      #     api_key: os.environ/ANTHROPIC_API_KEY
+
+      # Example: Local Ollama
+      # - model_name: llama2
+      #   litellm_params:
+      #     model: ollama/llama2
+      #     api_base: http://ollama.ai.svc.cluster.local:11434
+
+      # Placeholder - configure your models
+      - model_name: echo
+        litellm_params:
+          model: fake-openai-endpoint
+
+    litellm_settings:
+      drop_params: true
+      set_verbose: false
+
+    general_settings:
+      master_key: os.environ/LITELLM_MASTER_KEY

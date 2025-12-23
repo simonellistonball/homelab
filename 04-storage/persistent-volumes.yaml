@@ -1,0 +1,31 @@
+# Pre-provisioned NFS PV for Frigate surveillance storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: frigate-pv
+spec:
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-surveillance
+  nfs:
+    server: 192.168.1.101
+    path: /mnt/surveillance/frigate
+---
+# HuggingFace cache for ML models (shared across namespaces)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: huggingface-cache-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  hostPath:
+    path: /mnt/nvme-fast/huggingface-cache
+    type: DirectoryOrCreate

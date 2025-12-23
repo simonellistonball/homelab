@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gitea-cert
+  namespace: gitea
+spec:
+  secretName: gitea-tls
+  commonName: gitea.apps.house.simonellistonball.com
+  dnsNames:
+    - gitea.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer

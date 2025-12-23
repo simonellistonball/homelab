@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: harbor-cert
+  namespace: harbor
+spec:
+  secretName: harbor-tls
+  commonName: harbor.apps.house.simonellistonball.com
+  dnsNames:
+    - harbor.apps.house.simonellistonball.com
+    - notary.harbor.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer

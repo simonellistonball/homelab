@@ -1,0 +1,68 @@
+# Gitea Helm values
+
+gitea:
+  admin:
+    username: admin
+    password: GITEA_ADMIN_PASSWORD_PLACEHOLDER
+    email: admin@house.simonellistonball.com
+  config:
+    server:
+      DOMAIN: gitea.apps.house.simonellistonball.com
+      ROOT_URL: https://gitea.apps.house.simonellistonball.com
+      SSH_DOMAIN: gitea.apps.house.simonellistonball.com
+    database:
+      DB_TYPE: postgres
+      HOST: 192.168.1.103:5432
+      NAME: gitea
+      USER: gitea
+      PASSWD: POSTGRES_GITEA_PASSWORD_PLACEHOLDER
+    cache:
+      ADAPTER: redis
+      HOST: redis://:REDIS_PASSWORD_PLACEHOLDER@REDIS_HOST_PLACEHOLDER:6379/0
+    session:
+      PROVIDER: redis
+      PROVIDER_CONFIG: redis://:REDIS_PASSWORD_PLACEHOLDER@REDIS_HOST_PLACEHOLDER:6379/1
+    queue:
+      TYPE: redis
+      CONN_STR: redis://:REDIS_PASSWORD_PLACEHOLDER@REDIS_HOST_PLACEHOLDER:6379/2
+    actions:
+      ENABLED: true
+
+# Disable bundled databases
+postgresql:
+  enabled: false
+
+postgresql-ha:
+  enabled: false
+
+redis:
+  enabled: false
+
+redis-cluster:
+  enabled: false
+
+valkey:
+  enabled: false
+
+valkey-cluster:
+  enabled: false
+
+# Persistence
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: local-path
+
+# Service configuration
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer
+    port: 22
+    loadBalancerIP: 192.168.100.122
+
+# Ingress disabled - using Traefik IngressRoute
+ingress:
+  enabled: false

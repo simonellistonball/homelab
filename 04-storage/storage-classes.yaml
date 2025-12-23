@@ -1,0 +1,36 @@
+# NFS Storage Classes
+# These use the NFS CSI driver for TrueNAS storage
+
+---
+# NFS Storage Class for general data
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-data
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.101
+  share: /mnt/tank/k8s-data
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - hard
+  - noatime
+
+---
+# NFS Storage Class for surveillance data (Frigate)
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-surveillance
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.101
+  share: /mnt/tank/surveillance
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - hard
+  - noatime
