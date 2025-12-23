@@ -14,7 +14,7 @@ spec:
     server: TRUENAS_IP_PLACEHOLDER
     path: /mnt/surveillance/frigate
 ---
-# HuggingFace cache for ML models (shared across namespaces)
+# HuggingFace cache for ML models (shared across namespaces via NFS)
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -25,7 +25,7 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: ""
-  hostPath:
-    path: /mnt/nvme-fast/huggingface-cache
-    type: DirectoryOrCreate
+  storageClassName: nfs-models
+  nfs:
+    server: TRUENAS_IP_PLACEHOLDER
+    path: /mnt/fast/models
