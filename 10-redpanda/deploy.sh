@@ -13,8 +13,10 @@ helm repo update
 # Create certificates first
 kubectl apply -f certificates.yaml
 
+# Wait for certificates to be ready
 echo "Waiting for certificates to be ready..."
-sleep 10
+kubectl wait --for=condition=Ready certificate/redpanda-internal-cert -n redpanda --timeout=120s
+kubectl wait --for=condition=Ready certificate/redpanda-external-cert -n redpanda --timeout=120s 2>/dev/null || true
 
 # Install Redpanda
 helm upgrade --install redpanda redpanda/redpanda \
