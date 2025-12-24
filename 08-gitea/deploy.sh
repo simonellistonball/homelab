@@ -4,8 +4,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../config.env"
 
-# Get Redis service IP
-REDIS_IP=$(kubectl get svc redis -n redis -o jsonpath='{.spec.clusterIP}' 2>/dev/null || echo "redis.redis.svc.cluster.local")
+# Use Redis DNS name for service discovery
+REDIS_HOST="redis.redis.svc.cluster.local"
 
 echo "Installing Gitea..."
 
@@ -22,7 +22,7 @@ sleep 10
 # Install Gitea with Redis IP substituted
 cat values.yaml | \
   sed "s/REDIS_PASSWORD_PLACEHOLDER/${REDIS_PASSWORD}/g" | \
-  sed "s/REDIS_HOST_PLACEHOLDER/${REDIS_IP}/g" | \
+  sed "s/REDIS_HOST_PLACEHOLDER/${REDIS_HOST}/g" | \
   sed "s/POSTGRES_GITEA_PASSWORD_PLACEHOLDER/${POSTGRES_GITEA_PASSWORD}/g" | \
   sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" | \
   sed "s/GITEA_SSH_IP_PLACEHOLDER/${GITEA_SSH_IP}/g" | \
