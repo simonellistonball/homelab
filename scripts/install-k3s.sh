@@ -81,6 +81,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="\
   --disable-network-policy \
   --disable=servicelb \
   --disable=traefik \
+  --write-kubeconfig-mode=644 \
   --cluster-cidr=${POD_CIDR_V4},${POD_CIDR_V6} \
   --service-cidr=${SERVICE_CIDR_V4},${SERVICE_CIDR_V6} \
   --kubelet-arg=node-ip=0.0.0.0" sh -
@@ -108,6 +109,16 @@ if [ -n "$SUDO_USER_HOME" ] && [ "$SUDO_USER_HOME" != "/root" ]; then
     cp /etc/rancher/k3s/k3s.yaml "${SUDO_USER_HOME}/.kube/config"
     chown -R "${SUDO_USER:-$USER}:${SUDO_USER:-$USER}" "${SUDO_USER_HOME}/.kube"
     chmod 600 "${SUDO_USER_HOME}/.kube/config"
+
+    # Add KUBECONFIG to user's profile if not already present
+    PROFILE_FILE="${SUDO_USER_HOME}/.bashrc"
+    if ! grep -q 'export KUBECONFIG=' "$PROFILE_FILE" 2>/dev/null; then
+        echo "" >> "$PROFILE_FILE"
+        echo '# Kubernetes config' >> "$PROFILE_FILE"
+        echo 'export KUBECONFIG="$HOME/.kube/config"' >> "$PROFILE_FILE"
+        chown "${SUDO_USER:-$USER}:${SUDO_USER:-$USER}" "$PROFILE_FILE"
+        echo "Added KUBECONFIG to ${PROFILE_FILE}"
+    fi
 fi
 
 echo ""
