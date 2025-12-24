@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../config.env"
 
 NAMESPACE="kube-system"
-CILIUM_VERSION="1.19.0"
+CILIUM_VERSION="1.19.0-pre.3"
 
 echo "============================================"
 echo "  Deploying Cilium CNI v${CILIUM_VERSION}"
