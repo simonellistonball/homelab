@@ -8,8 +8,12 @@
 #   - Built-in Traefik disabled (we deploy our own)
 #   - Dual-stack networking enabled
 #
+# Also installs prerequisites:
+#   - PostgreSQL client (psql) for database management
+#   - Helm for Kubernetes package management
+#
 # Prerequisites:
-#   - Ubuntu/Debian or similar Linux distribution
+#   - Ubuntu/Debian, RHEL/CentOS, or Fedora Linux
 #   - Root or sudo access
 #   - Network interfaces configured with IPv4 and IPv6
 #
@@ -62,6 +66,36 @@ if command -v k3s &> /dev/null; then
     echo "To reinstall, first run: /usr/local/bin/k3s-uninstall.sh"
     exit 1
 fi
+
+# Install prerequisites
+echo "Installing prerequisites..."
+
+# Detect package manager and install PostgreSQL client
+if command -v apt-get &> /dev/null; then
+    apt-get update
+    apt-get install -y postgresql-client curl
+elif command -v dnf &> /dev/null; then
+    dnf install -y postgresql curl
+elif command -v yum &> /dev/null; then
+    yum install -y postgresql curl
+else
+    echo "WARNING: Could not detect package manager, skipping psql installation"
+fi
+
+# Install Helm
+if ! command -v helm &> /dev/null; then
+    echo "Installing Helm..."
+    curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+else
+    echo "Helm already installed: $(helm version --short)"
+fi
+
+# Verify installations
+echo ""
+echo "Installed tools:"
+command -v psql &> /dev/null && echo "  - psql: $(psql --version)" || echo "  - psql: NOT INSTALLED"
+command -v helm &> /dev/null && echo "  - helm: $(helm version --short)" || echo "  - helm: NOT INSTALLED"
+echo ""
 
 # Enable IPv6 forwarding and accept RA (needed for dual-stack)
 echo "Configuring sysctl for IPv6..."
