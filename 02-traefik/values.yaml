@@ -53,6 +53,11 @@ providers:
   kubernetesIngress:
     enabled: true
 
+# RBAC settings - allow reading secrets for TLS certificates across namespaces
+rbac:
+  enabled: true
+  namespaced: false
+
 logs:
   general:
     level: INFO
