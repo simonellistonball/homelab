@@ -48,6 +48,12 @@ if ! command -v cilium &> /dev/null; then
     install_cilium_cli
 fi
 
+# Install Prometheus Operator CRDs (needed for ServiceMonitor)
+echo "Installing Prometheus Operator CRDs..."
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+
 # Add Cilium Helm repo
 helm repo add cilium https://helm.cilium.io/ 2>/dev/null || true
 helm repo update cilium
