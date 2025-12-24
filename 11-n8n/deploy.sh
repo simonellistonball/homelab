@@ -25,8 +25,9 @@ kubectl get secret intermediate-ca-secret -n cert-manager -o yaml | \
   sed 's/name: intermediate-ca-secret/name: root-ca/' | \
   kubectl apply -f -
 
+# Wait for certificate to be ready
 echo "Waiting for certificate to be ready..."
-sleep 10
+kubectl wait --for=condition=Ready certificate/n8n-cert -n n8n --timeout=120s
 
 # Substitute config values in deployment
 TMP_DEPLOY=$(mktemp)

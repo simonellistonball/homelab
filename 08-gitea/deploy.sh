@@ -16,8 +16,9 @@ helm repo update
 # Create certificate first
 kubectl apply -f certificate.yaml
 
+# Wait for certificate to be ready
 echo "Waiting for certificate to be ready..."
-sleep 10
+kubectl wait --for=condition=Ready certificate/gitea-cert -n gitea --timeout=120s
 
 # Install Gitea with Redis IP substituted
 cat values.yaml | \

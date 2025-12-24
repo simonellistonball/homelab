@@ -16,8 +16,9 @@ kubectl create namespace harbor --dry-run=client -o yaml | kubectl apply -f -
 # Create certificate first
 kubectl apply -f certificate.yaml
 
+# Wait for certificate to be ready
 echo "Waiting for certificate to be ready..."
-sleep 10
+kubectl wait --for=condition=Ready certificate/harbor-cert -n harbor --timeout=120s
 
 # Substitute passwords in values.yaml
 cat values.yaml | \
