@@ -35,6 +35,7 @@ A complete infrastructure-as-code setup for a K3s single-node cluster with dual-
 | **n8n** | Workflow automation |
 | **LiteLLM** | LLM API proxy |
 | **Whisper** | Speech-to-text service |
+| **SeaweedFS** | S3-compatible object storage with tiered storage |
 
 ## Prerequisites
 
@@ -107,6 +108,7 @@ homelab/
 ├── scripts/
 │   ├── install-k3s.sh           # K3s installation
 │   ├── generate-postgres-sql.sh # PostgreSQL setup
+│   ├── generate-ca-secret.sh    # Generate CA secret from certs
 │   └── update-postgres-passwords.sh
 ├── 00-namespaces/         # Kubernetes namespaces
 ├── 01-cilium/             # Cilium CNI + L2 LoadBalancer
@@ -120,7 +122,8 @@ homelab/
 ├── 09-dagster/            # Data orchestration
 ├── 10-redpanda/           # Kafka-compatible streaming
 ├── 11-n8n/                # Workflow automation
-└── 12-ai/                 # LiteLLM + Whisper
+├── 12-ai/                 # LiteLLM + Whisper
+└── 13-seaweedfs/          # S3-compatible object storage
 ```
 
 ## Network Configuration
@@ -170,6 +173,8 @@ After deployment, services are available at:
 | n8n | https://n8n.apps.house.simonellistonball.com |
 | LiteLLM | https://llm.apps.house.simonellistonball.com |
 | Whisper | https://whisper.apps.house.simonellistonball.com |
+| SeaweedFS S3 | https://s3.apps.house.simonellistonball.com |
+| SeaweedFS Filer | https://seaweedfs.apps.house.simonellistonball.com |
 
 ## PostgreSQL Setup
 
@@ -184,6 +189,47 @@ psql -h 192.168.1.103 -U postgres < scripts/postgres-setup.sql
 ```
 
 Required databases: `n8n`, `gitea`, `harbor`, `dagster`, `litellm`, `immich`, `frigate`
+
+## SeaweedFS Object Storage
+
+SeaweedFS provides S3-compatible object storage with tiered storage:
+
+### Storage Tiers
+
+| Tier | Storage Class | Use Case |
+|------|--------------|----------|
+| Hot | nvme-fast | Frequently accessed, performance-critical |
+| Warm | nfs-data | Regular data |
+| Cold | nfs-archive | Infrequently accessed, archival |
+
+### Path-Based Tiering
+
+Data is automatically placed on the appropriate tier based on bucket path:
+
+```
+/buckets/hot/*     → Hot tier (SSD)
+/buckets/cache/*   → Hot tier (SSD)
+/buckets/data/*    → Warm tier (HDD)
+/buckets/archive/* → Cold tier (HDD)
+/buckets/backup/*  → Cold tier (HDD)
+```
+
+### S3 API Usage
+
+```bash
+# Configure AWS CLI
+export AWS_ACCESS_KEY_ID=<your-access-key>
+export AWS_SECRET_ACCESS_KEY=<your-secret-key>
+
+# Create bucket
+aws --endpoint-url=https://s3.apps.house.simonellistonball.com s3 mb s3://mybucket
+
+# Upload file
+aws --endpoint-url=https://s3.apps.house.simonellistonball.com s3 cp file.txt s3://mybucket/
+
+# List buckets
+aws --endpoint-url=https://s3.apps.house.simonellistonball.com s3 ls
+```
 
 ## Troubleshooting
 
@@ -231,3 +277,4 @@ Important data to backup:
 - NFS shares on TrueNAS
 - Gitea repositories
 - Harbor container images
+- SeaweedFS object storage data

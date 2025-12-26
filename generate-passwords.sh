@@ -18,6 +18,16 @@ generate_hex_key() {
     openssl rand -hex 32
 }
 
+# Function to generate S3-style access key (20 chars uppercase alphanumeric)
+generate_s3_access_key() {
+    openssl rand -base64 20 | tr -d '/+=' | tr '[:lower:]' '[:upper:]' | head -c 20
+}
+
+# Function to generate S3-style secret key (40 chars)
+generate_s3_secret_key() {
+    openssl rand -base64 40 | tr -d '/+=' | head -c 40
+}
+
 cat << EOF
 # ============================================
 # PostgreSQL Database Passwords
@@ -52,6 +62,14 @@ export LITELLM_SALT_KEY="sk-salt-$(generate_password)"
 # n8n Configuration
 # ============================================
 export N8N_ENCRYPTION_KEY="$(generate_hex_key)"
+
+# ============================================
+# SeaweedFS S3 Configuration
+# ============================================
+export SEAWEEDFS_ACCESS_KEY="$(generate_s3_access_key)"
+export SEAWEEDFS_SECRET_KEY="$(generate_s3_secret_key)"
+export SEAWEEDFS_READONLY_ACCESS_KEY="$(generate_s3_access_key)"
+export SEAWEEDFS_READONLY_SECRET_KEY="$(generate_s3_secret_key)"
 
 EOF
 
