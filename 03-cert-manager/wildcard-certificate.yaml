@@ -15,3 +15,5 @@ spec:
   subject:
     organizations:
       - Simon Elliston Ball
+    organizationalUnits:
+      - homelab

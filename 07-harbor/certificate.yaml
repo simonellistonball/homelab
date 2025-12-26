@@ -12,3 +12,8 @@ spec:
   issuerRef:
     name: ca-issuer
     kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab

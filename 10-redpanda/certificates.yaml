@@ -11,6 +11,11 @@ spec:
   issuerRef:
     name: ca-issuer
     kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -25,6 +30,11 @@ spec:
   issuerRef:
     name: ca-issuer
     kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -45,3 +55,8 @@ spec:
   issuerRef:
     name: ca-issuer
     kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
