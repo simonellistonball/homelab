@@ -29,7 +29,7 @@ spec:
             - -max=500
             - -dataCenter=dc1
             - -rack=warm
-            - -diskType=hdd
+            - -disk=hdd
           ports:
             - containerPort: 8080
               name: volume

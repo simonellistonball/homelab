@@ -29,7 +29,7 @@ spec:
             - -max=100
             - -dataCenter=dc1
             - -rack=hot
-            - -diskType=ssd
+            - -disk=ssd
           ports:
             - containerPort: 8080
               name: volume
