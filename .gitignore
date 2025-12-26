@@ -20,6 +20,9 @@ passwords.txt
 passwords.env
 *.passwords
 
+# CA certificates and keys - NEVER commit these
+ca/
+
 # Temporary helm values (may contain substituted passwords)
 /tmp/
 *.tmp
