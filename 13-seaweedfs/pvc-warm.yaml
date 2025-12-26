@@ -1,0 +1,13 @@
+# Warm tier PVC - requires nfs-data storage class
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seaweedfs-volume-warm
+  namespace: seaweedfs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
+  storageClassName: nfs-data

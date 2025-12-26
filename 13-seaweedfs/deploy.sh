@@ -9,6 +9,11 @@ source ../config.env
 
 echo "=== Deploying SeaweedFS ==="
 
+# Helper function to check if a storage class exists
+storage_class_exists() {
+    kubectl get storageclass "$1" &>/dev/null
+}
+
 # Create namespace
 echo "Creating namespace..."
 kubectl create namespace seaweedfs --dry-run=client -o yaml | kubectl apply -f -
@@ -38,9 +43,9 @@ cat configmap.yaml | \
   sed "s/SEAWEEDFS_READONLY_SECRET_KEY_PLACEHOLDER/${SEAWEEDFS_READONLY_SECRET_KEY}/g" | \
   kubectl apply -f -
 
-# Create PVCs
-echo "Creating persistent volume claims..."
-kubectl apply -f pvc.yaml
+# Create core PVCs (master, filer, hot tier - all use nvme-fast)
+echo "Creating core persistent volume claims..."
+kubectl apply -f pvc-core.yaml
 
 # Deploy Master
 echo "Deploying SeaweedFS Master..."
@@ -50,15 +55,35 @@ kubectl apply -f master.yaml
 echo "Waiting for master to be ready..."
 kubectl wait --for=condition=ready pod -l app=seaweedfs-master -n seaweedfs --timeout=180s
 
-# Deploy Volume Servers (all tiers)
-echo "Deploying SeaweedFS Volume Servers (hot/warm/cold tiers)..."
-kubectl apply -f volume.yaml
-
-# Wait for volume servers to be ready
-echo "Waiting for volume servers to be ready..."
+# Deploy Hot Tier Volume Server (always deployed - uses nvme-fast)
+echo "Deploying SeaweedFS Volume Server (hot tier)..."
+kubectl apply -f volume-hot.yaml
 kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-hot -n seaweedfs --timeout=180s
-kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-warm -n seaweedfs --timeout=180s
-kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-cold -n seaweedfs --timeout=180s
+
+# Track which tiers are available
+TIERS_AVAILABLE="hot"
+
+# Check and deploy warm tier if nfs-data storage class exists
+if storage_class_exists "nfs-data"; then
+    echo "Deploying SeaweedFS Volume Server (warm tier)..."
+    kubectl apply -f pvc-warm.yaml
+    kubectl apply -f volume-warm.yaml
+    kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-warm -n seaweedfs --timeout=180s
+    TIERS_AVAILABLE="${TIERS_AVAILABLE}, warm"
+else
+    echo "Skipping warm tier: nfs-data storage class not found"
+fi
+
+# Check and deploy cold tier if nfs-archive storage class exists
+if storage_class_exists "nfs-archive"; then
+    echo "Deploying SeaweedFS Volume Server (cold tier)..."
+    kubectl apply -f pvc-cold.yaml
+    kubectl apply -f volume-cold.yaml
+    kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-cold -n seaweedfs --timeout=180s
+    TIERS_AVAILABLE="${TIERS_AVAILABLE}, cold"
+else
+    echo "Skipping cold tier: nfs-archive storage class not found"
+fi
 
 # Deploy Filer with S3 API
 echo "Deploying SeaweedFS Filer with S3 API..."
@@ -82,17 +107,26 @@ echo "S3 Credentials:"
 echo "  Access Key: ${SEAWEEDFS_ACCESS_KEY}"
 echo "  Secret Key: ${SEAWEEDFS_SECRET_KEY}"
 echo ""
-echo "Storage Tiers:"
-echo "  Hot (ssd):  NVMe storage for frequently accessed data"
-echo "  Warm (hdd): NFS storage for regular data"
-echo "  Cold (hdd): NFS archive for infrequently accessed data"
+echo "Storage Tiers Available: ${TIERS_AVAILABLE}"
 echo ""
+if [[ "$TIERS_AVAILABLE" == "hot" ]]; then
+    echo "NOTE: Only hot tier (nvme-fast) is active."
+    echo "      To enable warm/cold tiers, ensure these storage classes exist:"
+    echo "        - nfs-data (for warm tier)"
+    echo "        - nfs-archive (for cold tier)"
+    echo "      Then re-run this deploy script."
+    echo ""
+fi
 echo "Bucket Tiering (path-based):"
 echo "  /buckets/hot/*     -> Hot tier (SSD)"
 echo "  /buckets/cache/*   -> Hot tier (SSD)"
-echo "  /buckets/data/*    -> Warm tier (HDD)"
-echo "  /buckets/archive/* -> Cold tier (HDD)"
-echo "  /buckets/backup/*  -> Cold tier (HDD)"
+if [[ "$TIERS_AVAILABLE" == *"warm"* ]]; then
+    echo "  /buckets/data/*    -> Warm tier (HDD)"
+fi
+if [[ "$TIERS_AVAILABLE" == *"cold"* ]]; then
+    echo "  /buckets/archive/* -> Cold tier (HDD)"
+    echo "  /buckets/backup/*  -> Cold tier (HDD)"
+fi
 echo ""
 echo "Example AWS CLI usage:"
 echo "  export AWS_ACCESS_KEY_ID=${SEAWEEDFS_ACCESS_KEY}"

@@ -1,0 +1,80 @@
+# SeaweedFS Cold Tier Volume Server
+# NFS archive storage for infrequently accessed data
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seaweedfs-volume-cold
+  namespace: seaweedfs
+spec:
+  serviceName: seaweedfs-volume-cold
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seaweedfs-volume-cold
+  template:
+    metadata:
+      labels:
+        app: seaweedfs-volume-cold
+        tier: cold
+    spec:
+      containers:
+        - name: volume
+          image: chrislusf/seaweedfs:latest
+          args:
+            - volume
+            - -mserver=seaweedfs-master:9333
+            - -ip.bind=0.0.0.0
+            - -port=8080
+            - -dir=/data
+            - -max=1000
+            - -dataCenter=dc1
+            - -rack=cold
+            - -diskType=hdd
+          ports:
+            - containerPort: 8080
+              name: volume
+            - containerPort: 18080
+              name: volume-grpc
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: seaweedfs-volume-cold
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-volume-cold
+  namespace: seaweedfs
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: volume
+    - port: 18080
+      targetPort: 18080
+      name: volume-grpc
+  selector:
+    app: seaweedfs-volume-cold

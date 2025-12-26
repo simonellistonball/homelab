@@ -1,0 +1,13 @@
+# Cold tier PVC - requires nfs-archive storage class
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seaweedfs-volume-cold
+  namespace: seaweedfs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+  storageClassName: nfs-archive
