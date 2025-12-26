@@ -1,0 +1,125 @@
+# S3 API Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seaweedfs-s3-config
+  namespace: seaweedfs
+data:
+  s3.json: |
+    {
+      "identities": [
+        {
+          "name": "admin",
+          "credentials": [
+            {
+              "accessKey": "SEAWEEDFS_ACCESS_KEY_PLACEHOLDER",
+              "secretKey": "SEAWEEDFS_SECRET_KEY_PLACEHOLDER"
+            }
+          ],
+          "actions": [
+            "Admin",
+            "Read",
+            "Write",
+            "List",
+            "Tagging"
+          ]
+        },
+        {
+          "name": "readonly",
+          "credentials": [
+            {
+              "accessKey": "SEAWEEDFS_READONLY_ACCESS_KEY_PLACEHOLDER",
+              "secretKey": "SEAWEEDFS_READONLY_SECRET_KEY_PLACEHOLDER"
+            }
+          ],
+          "actions": [
+            "Read",
+            "List"
+          ]
+        }
+      ]
+    }
+---
+# Filer Configuration with Tiering Rules
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seaweedfs-filer-config
+  namespace: seaweedfs
+data:
+  filer.toml: |
+    # Filer configuration
+    [filer.options]
+    recursive_delete = true
+
+    # Embedded LevelDB for filer metadata (default)
+    [leveldb2]
+    enabled = true
+    dir = "/data/filerldb2"
+
+    # Tiering configuration
+    # Data placement based on disk type:
+    # - ssd (hot tier): frequently accessed, performance-critical
+    # - hdd (warm/cold tier): regular and archival storage
+
+    # Default to warm tier for new uploads
+    [filer.default_placement]
+    # Default replication and disk type for new files
+    # Can be overridden per-bucket via S3 storage class headers
+    disk_type = "hdd"
+
+    # Path-based tiering rules
+    # Hot tier paths - use SSD storage
+    [[path_prefix_mapping]]
+    path_prefix = "/buckets/hot/"
+    disk_type = "ssd"
+
+    [[path_prefix_mapping]]
+    path_prefix = "/buckets/cache/"
+    disk_type = "ssd"
+
+    # Warm tier paths - use HDD (warm rack)
+    [[path_prefix_mapping]]
+    path_prefix = "/buckets/data/"
+    disk_type = "hdd"
+    rack = "warm"
+
+    # Cold tier paths - use HDD (cold rack)
+    [[path_prefix_mapping]]
+    path_prefix = "/buckets/archive/"
+    disk_type = "hdd"
+    rack = "cold"
+
+    [[path_prefix_mapping]]
+    path_prefix = "/buckets/backup/"
+    disk_type = "hdd"
+    rack = "cold"
+---
+# Tiering policy ConfigMap - used by cronjob for data lifecycle
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seaweedfs-tiering-policy
+  namespace: seaweedfs
+data:
+  tiering-rules.json: |
+    {
+      "rules": [
+        {
+          "name": "hot-to-warm",
+          "description": "Move data from hot to warm tier after 7 days",
+          "source_rack": "hot",
+          "target_rack": "warm",
+          "age_days": 7,
+          "min_size_mb": 1
+        },
+        {
+          "name": "warm-to-cold",
+          "description": "Move data from warm to cold tier after 30 days",
+          "source_rack": "warm",
+          "target_rack": "cold",
+          "age_days": 30,
+          "min_size_mb": 1
+        }
+      ]
+    }

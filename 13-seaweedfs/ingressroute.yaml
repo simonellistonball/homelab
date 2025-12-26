@@ -1,0 +1,35 @@
+# S3 API endpoint
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: seaweedfs-s3
+  namespace: seaweedfs
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`s3.apps.house.simonellistonball.com`)
+      services:
+        - name: seaweedfs-s3
+          port: 8333
+  tls:
+    secretName: seaweedfs-tls
+---
+# Filer web UI endpoint
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: seaweedfs-filer
+  namespace: seaweedfs
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`seaweedfs.apps.house.simonellistonball.com`)
+      services:
+        - name: seaweedfs-filer
+          port: 8888
+  tls:
+    secretName: seaweedfs-tls

@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: seaweedfs-cert
+  namespace: seaweedfs
+spec:
+  secretName: seaweedfs-tls
+  commonName: s3.apps.house.simonellistonball.com
+  dnsNames:
+    - s3.apps.house.simonellistonball.com
+    - seaweedfs.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab

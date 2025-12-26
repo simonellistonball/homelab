@@ -121,6 +121,7 @@ main() {
     deploy_component "${SCRIPT_DIR}/10-redpanda"
     deploy_component "${SCRIPT_DIR}/11-n8n"
     deploy_component "${SCRIPT_DIR}/12-ai"
+    deploy_component "${SCRIPT_DIR}/13-seaweedfs"
 
     echo ""
     log_success "=============================================="
@@ -138,6 +139,8 @@ main() {
     echo "  n8n:               https://n8n.apps.house.simonellistonball.com"
     echo "  LiteLLM:           https://llm.apps.house.simonellistonball.com"
     echo "  Whisper:           https://whisper.apps.house.simonellistonball.com"
+    echo "  SeaweedFS S3:      https://s3.apps.house.simonellistonball.com"
+    echo "  SeaweedFS Filer:   https://seaweedfs.apps.house.simonellistonball.com"
     echo ""
     echo "Note: Ensure your DNS points *.apps.house.simonellistonball.com to ${TRAEFIK_IP:-192.168.100.111}"
     echo ""

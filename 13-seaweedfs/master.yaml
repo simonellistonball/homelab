@@ -1,0 +1,77 @@
+# SeaweedFS Master Server
+# Coordinates the cluster and manages volume allocation
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seaweedfs-master
+  namespace: seaweedfs
+spec:
+  serviceName: seaweedfs-master
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seaweedfs-master
+  template:
+    metadata:
+      labels:
+        app: seaweedfs-master
+    spec:
+      containers:
+        - name: master
+          image: chrislusf/seaweedfs:latest
+          args:
+            - master
+            - -ip=seaweedfs-master
+            - -ip.bind=0.0.0.0
+            - -port=9333
+            - -mdir=/data
+            - -defaultReplication=000
+            - -volumeSizeLimitMB=1000
+          ports:
+            - containerPort: 9333
+              name: master
+            - containerPort: 19333
+              name: master-grpc
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /cluster/status
+              port: 9333
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /cluster/status
+              port: 9333
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: seaweedfs-master-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-master
+  namespace: seaweedfs
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9333
+      targetPort: 9333
+      name: master
+    - port: 19333
+      targetPort: 19333
+      name: master-grpc
+  selector:
+    app: seaweedfs-master
