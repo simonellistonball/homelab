@@ -91,9 +91,10 @@ if [ "$NFS_AVAILABLE" = true ]; then
     echo "Creating NFS storage classes..."
 
     # Deploy core NFS storage classes (nfs-data, nfs-models)
+    # Use replace --force to recreate if parameters changed
     if [ -f "${SCRIPT_DIR}/storage-classes-nfs-core.yaml" ]; then
         sed "s/TRUENAS_IP_PLACEHOLDER/${TRUENAS_IP}/g" "${SCRIPT_DIR}/storage-classes-nfs-core.yaml" > "$TMP_SC"
-        kubectl apply -f "$TMP_SC"
+        kubectl replace --force -f "$TMP_SC" 2>/dev/null || kubectl apply -f "$TMP_SC"
     fi
 
     # Ask about optional NFS storage classes
@@ -105,7 +106,7 @@ if [ "$NFS_AVAILABLE" = true ]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         if [ -f "${SCRIPT_DIR}/storage-classes-nfs-optional.yaml" ]; then
             sed "s/TRUENAS_IP_PLACEHOLDER/${TRUENAS_IP}/g" "${SCRIPT_DIR}/storage-classes-nfs-optional.yaml" > "$TMP_SC"
-            kubectl apply -f "$TMP_SC"
+            kubectl replace --force -f "$TMP_SC" 2>/dev/null || kubectl apply -f "$TMP_SC"
         fi
     else
         echo "Skipping optional NFS storage classes."
