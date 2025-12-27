@@ -19,11 +19,8 @@ kubectl create secret generic n8n-secrets \
   --from-literal=N8N_ENCRYPTION_KEY="${N8N_ENCRYPTION_KEY}" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# Create root CA secret for HTTPS calls
-kubectl get secret intermediate-ca-secret -n cert-manager -o yaml | \
-  sed 's/namespace: cert-manager/namespace: n8n/' | \
-  sed 's/name: intermediate-ca-secret/name: root-ca/' | \
-  kubectl apply -f -
+# Note: Root CA trust is automatically distributed by trust-manager
+# via the homelab-ca-bundle ConfigMap
 
 # Wait for certificate to be ready
 echo "Waiting for certificate to be ready..."

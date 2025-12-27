@@ -63,7 +63,7 @@ spec:
             - name: GENERIC_TIMEZONE
               value: Europe/London
             - name: NODE_EXTRA_CA_CERTS
-              value: /etc/ssl/certs/root-ca.crt
+              value: /etc/ssl/certs/homelab-ca.crt
           ports:
             - containerPort: 5678
           resources:
@@ -76,14 +76,14 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/node/.n8n
-            - name: root-ca
-              mountPath: /etc/ssl/certs/root-ca.crt
-              subPath: tls.crt
+            - name: homelab-ca
+              mountPath: /etc/ssl/certs/homelab-ca.crt
+              subPath: ca-certificates.crt
               readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: n8n-data
-        - name: root-ca
-          secret:
-            secretName: root-ca
+        - name: homelab-ca
+          configMap:
+            name: homelab-ca-bundle

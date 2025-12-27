@@ -1,0 +1,19 @@
+# Root CA ConfigMap for trust-manager
+# This contains only the root CA certificate for trust distribution
+#
+# GENERATED FILE - Do not edit manually!
+# Regenerate with: ./scripts/generate-ca-secret.sh
+#
+# This file must be regenerated after you set up your CA in the ca/ directory.
+# If you see this placeholder, run:
+#   ./scripts/generate-ca-secret.sh
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: root-ca-configmap
+  namespace: cert-manager
+data:
+  root-ca.crt: |
+    # PLACEHOLDER - Run ./scripts/generate-ca-secret.sh to generate this file
+    # from your CA in the ca/ directory

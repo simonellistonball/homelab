@@ -114,10 +114,42 @@ EOF
 
 echo ""
 echo "Successfully generated ${OUTPUT_FILE}"
+
+# Also create root CA ConfigMap for trust distribution
+ROOT_CA="${CA_DIR}/certs/ca.cert.pem"
+if [[ ! -f "${ROOT_CA}" ]]; then
+    ROOT_CA="${CA_DIR}/simonellistonball-CA.crt"
+fi
+
+ROOT_CA_OUTPUT="${REPO_ROOT}/03-cert-manager/root-ca-configmap.yaml"
+
+if [[ -f "${ROOT_CA}" ]]; then
+    echo "Generating root CA ConfigMap for trust-manager..."
+    ROOT_CA_CONTENT=$(cat "${ROOT_CA}")
+    cat > "${ROOT_CA_OUTPUT}" << EOF
+# Root CA ConfigMap for trust-manager
+# This contains only the root CA certificate for trust distribution
+# GENERATED FILE - Do not edit manually!
+# Regenerate with: ./scripts/generate-ca-secret.sh
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: root-ca-configmap
+  namespace: cert-manager
+data:
+  root-ca.crt: |
+$(echo "${ROOT_CA_CONTENT}" | sed 's/^/    /')
+EOF
+    echo "Successfully generated ${ROOT_CA_OUTPUT}"
+else
+    echo "Warning: Root CA not found at ${ROOT_CA}, skipping root CA ConfigMap"
+fi
+
 echo ""
 echo "Certificate details:"
 openssl x509 -noout -subject -issuer -dates -in "${CERT_CHAIN}" | head -4
 
 echo ""
-echo "To apply the secret:"
+echo "To apply the secrets:"
 echo "  kubectl apply -f ${OUTPUT_FILE}"
+echo "  kubectl apply -f ${ROOT_CA_OUTPUT}"

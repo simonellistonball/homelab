@@ -1,0 +1,26 @@
+# Trust Bundle - distributes Root CA certificate to all namespaces
+# Uses trust-manager to automatically sync the CA to ConfigMaps cluster-wide
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: homelab-ca-bundle
+spec:
+  sources:
+    # Include the root CA certificate for trust verification
+    # This is the root that signed the intermediate CA
+    - configMap:
+        name: "root-ca-configmap"
+        key: "root-ca.crt"
+  target:
+    # Create a ConfigMap named 'homelab-ca-bundle' in all namespaces
+    configMap:
+      key: "ca-certificates.crt"
+    # Also add to the default CA bundle location for convenience
+    additionalFormats:
+      jks:
+        key: "ca-certificates.jks"
+      pkcs12:
+        key: "ca-certificates.p12"
+    # Sync to all namespaces
+    namespaceSelector:
+      matchLabels: {}
