@@ -1,0 +1,125 @@
+# Certificates for external (non-K8s) services
+# These are created in the cert-manager namespace and can be exported
+# to external services like TrueNAS, PostgreSQL, Home Assistant, etc.
+#
+# These certificates have a 5-year validity since automatic rotation
+# is not easily possible on external systems.
+#
+# To export a certificate for use on an external service:
+#   kubectl get secret <secret-name> -n cert-manager -o jsonpath='{.data.tls\.crt}' | base64 -d > cert.pem
+#   kubectl get secret <secret-name> -n cert-manager -o jsonpath='{.data.tls\.key}' | base64 -d > key.pem
+
+---
+# TrueNAS NAS certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nas-cert
+  namespace: cert-manager
+spec:
+  secretName: nas-tls
+  duration: 43800h    # 5 years
+  renewBefore: 720h   # 30 days
+  commonName: nas.house.simonellistonball.com
+  dnsNames:
+    - nas.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
+
+---
+# PostgreSQL server certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: postgres-cert
+  namespace: cert-manager
+spec:
+  secretName: postgres-tls
+  duration: 43800h    # 5 years
+  renewBefore: 720h   # 30 days
+  commonName: postgres.house.simonellistonball.com
+  dnsNames:
+    - postgres.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
+
+---
+# Home Assistant certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homeassistant-cert
+  namespace: cert-manager
+spec:
+  secretName: homeassistant-tls
+  duration: 43800h    # 5 years
+  renewBefore: 720h   # 30 days
+  commonName: homeassistant.house.simonellistonball.com
+  dnsNames:
+    - homeassistant.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
+
+---
+# Pi5 K3s node certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pi5-cert
+  namespace: cert-manager
+spec:
+  secretName: pi5-tls
+  duration: 43800h    # 5 years
+  renewBefore: 720h   # 30 days
+  commonName: pi5.house.simonellistonball.com
+  dnsNames:
+    - pi5.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
+
+---
+# UniFi Dream Machine certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: unifi-cert
+  namespace: cert-manager
+spec:
+  secretName: unifi-tls
+  duration: 43800h    # 5 years
+  renewBefore: 720h   # 30 days
+  commonName: unifi.house.simonellistonball.com
+  dnsNames:
+    - unifi.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab

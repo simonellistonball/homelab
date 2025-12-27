@@ -23,6 +23,9 @@ passwords.env
 # CA certificates and keys - NEVER commit these
 ca/
 
+# Exported certificates (contain private keys)
+03-cert-manager/exported-certs/
+
 # Temporary helm values (may contain substituted passwords)
 /tmp/
 *.tmp
