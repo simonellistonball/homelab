@@ -7,6 +7,16 @@ grafana:
   grafana.ini:
     server:
       root_url: https://grafana.apps.house.simonellistonball.com
+  # Mount CA bundle for trusting internal TLS certificates
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
   persistence:
     enabled: true
     size: 5Gi
@@ -28,6 +38,16 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 15d
+    # Mount CA bundle for scraping internal HTTPS endpoints
+    volumes:
+      - name: ca-bundle
+        configMap:
+          name: simonellistonball-ca-bundle
+    volumeMounts:
+      - name: ca-bundle
+        mountPath: /etc/ssl/certs/ca-certificates.crt
+        subPath: ca-certificates.crt
+        readOnly: true
     storageSpec:
       volumeClaimTemplate:
         spec:

@@ -43,6 +43,11 @@ spec:
             #     secretKeyRef:
             #       name: litellm-secrets
             #       key: OPENAI_API_KEY
+            # Trust internal CA (distributed by trust-manager)
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/ca-certificates.crt
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/ssl/certs/ca-certificates.crt
           ports:
             - containerPort: 4000
               name: http
@@ -68,7 +73,14 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/litellm
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
       volumes:
         - name: config
           configMap:
             name: litellm-config
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle

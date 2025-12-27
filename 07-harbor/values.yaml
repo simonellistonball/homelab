@@ -38,10 +38,6 @@ persistence:
       storageClass: nfs-fast
       size: 5Gi
 
-# Enable Trivy vulnerability scanning
-trivy:
-  enabled: true
-
 # Disable Notary (deprecated)
 notary:
   enabled: false
@@ -51,3 +47,57 @@ metrics:
   enabled: true
   serviceMonitor:
     enabled: true
+
+# CA trust bundle from trust-manager
+# This allows Harbor components to trust internal CA-signed certificates
+caBundleSecretName: ""
+caSecretName: ""
+
+# Add CA bundle to core component
+core:
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
+
+# Add CA bundle to jobservice
+jobservice:
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
+
+# Add CA bundle to registry
+registry:
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
+
+# Enable Trivy vulnerability scanning with CA bundle
+trivy:
+  enabled: true
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true

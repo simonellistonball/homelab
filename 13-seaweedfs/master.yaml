@@ -35,6 +35,10 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
           resources:
             requests:
               memory: "256Mi"
@@ -58,6 +62,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: seaweedfs-master-data
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle
 ---
 apiVersion: v1
 kind: Service

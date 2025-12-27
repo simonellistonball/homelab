@@ -66,3 +66,15 @@ service:
 # Ingress disabled - using Traefik IngressRoute
 ingress:
   enabled: false
+
+# CA trust bundle from trust-manager
+extraVolumes:
+  - name: ca-bundle
+    configMap:
+      name: simonellistonball-ca-bundle
+
+extraVolumeMounts:
+  - name: ca-bundle
+    mountPath: /etc/ssl/certs/ca-certificates.crt
+    subPath: ca-certificates.crt
+    readOnly: true

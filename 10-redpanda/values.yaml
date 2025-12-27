@@ -34,6 +34,15 @@ external:
 # Console
 console:
   enabled: true
+  extraVolumes:
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  extraVolumeMounts:
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
 
 # Monitoring
 monitoring:

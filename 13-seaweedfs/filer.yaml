@@ -54,6 +54,10 @@ spec:
             - name: filer-config
               mountPath: /etc/seaweedfs/filer.toml
               subPath: filer.toml
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
           resources:
             requests:
               memory: "512Mi"
@@ -83,6 +87,9 @@ spec:
         - name: filer-config
           configMap:
             name: seaweedfs-filer-config
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle
 ---
 apiVersion: v1
 kind: Service

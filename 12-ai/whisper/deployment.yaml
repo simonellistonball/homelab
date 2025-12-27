@@ -26,6 +26,11 @@ spec:
               value: small  # Options: tiny, base, small, medium, large
             - name: HF_HOME
               value: /cache
+            # Trust internal CA (distributed by trust-manager)
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/ca-certificates.crt
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/ssl/certs/ca-certificates.crt
           ports:
             - containerPort: 8000
           resources:
@@ -50,7 +55,14 @@ spec:
           volumeMounts:
             - name: cache
               mountPath: /cache
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
       volumes:
         - name: cache
           persistentVolumeClaim:
             claimName: whisper-models
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle
