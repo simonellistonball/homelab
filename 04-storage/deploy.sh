@@ -5,7 +5,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../config.env"
 
 # Local storage mount points (should be mounted on the K3s node)
-NVME_FAST_PATH="${NVME_FAST_PATH:-/mnt/nvme-fast}"
 SCRATCH_PATH="${SCRATCH_PATH:-/mnt/scratch}"
 
 echo "============================================"
@@ -29,7 +28,6 @@ check_mount() {
 }
 
 MOUNT_OK=true
-check_mount "$NVME_FAST_PATH" "nvme-fast" || MOUNT_OK=false
 check_mount "$SCRATCH_PATH" "scratch" || MOUNT_OK=false
 
 if [ "$MOUNT_OK" = false ]; then
@@ -46,11 +44,10 @@ fi
 echo ""
 echo "Configuring local-path provisioners for multiple drives..."
 
-# Deploy additional local-path provisioners for nvme-fast and scratch
+# Deploy additional local-path provisioners for scratch storage
 kubectl apply -f local-path-config.yaml
 
 echo "Waiting for provisioners to be ready..."
-kubectl -n kube-system wait --for=condition=available deployment/local-path-provisioner-nvme --timeout=60s || true
 kubectl -n kube-system wait --for=condition=available deployment/local-path-provisioner-scratch --timeout=60s || true
 
 echo "Installing NFS CSI Driver..."
@@ -121,7 +118,7 @@ if [ "$NFS_AVAILABLE" = true ]; then
 else
     echo ""
     echo "Skipping NFS storage classes (NFS server not available)."
-    echo "Only local storage classes (nvme-fast, scratch) will be available."
+    echo "Only local storage class (scratch) will be available."
     echo ""
     echo "To add NFS storage classes later:"
     echo "  1. Ensure TRUENAS_IP is set in config.env"
@@ -172,7 +169,6 @@ EOF
     fi
 }
 
-test_storage_class "nvme-fast"
 test_storage_class "scratch"
 
 echo ""

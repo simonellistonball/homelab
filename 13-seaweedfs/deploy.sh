@@ -43,7 +43,7 @@ cat configmap.yaml | \
   sed "s/SEAWEEDFS_READONLY_SECRET_KEY_PLACEHOLDER/${SEAWEEDFS_READONLY_SECRET_KEY}/g" | \
   kubectl apply -f -
 
-# Create core PVCs (master, filer, hot tier - all use nvme-fast)
+# Create core PVCs (master, filer, hot tier - all use nfs-fast)
 echo "Creating core persistent volume claims..."
 kubectl apply -f pvc-core.yaml
 
@@ -55,7 +55,7 @@ kubectl apply -f master.yaml
 echo "Waiting for master to be ready..."
 kubectl wait --for=condition=ready pod -l app=seaweedfs-master -n seaweedfs --timeout=180s
 
-# Deploy Hot Tier Volume Server (always deployed - uses nvme-fast)
+# Deploy Hot Tier Volume Server (always deployed - uses nfs-fast)
 echo "Deploying SeaweedFS Volume Server (hot tier)..."
 kubectl apply -f volume-hot.yaml
 kubectl wait --for=condition=ready pod -l app=seaweedfs-volume-hot -n seaweedfs --timeout=180s
@@ -110,7 +110,7 @@ echo ""
 echo "Storage Tiers Available: ${TIERS_AVAILABLE}"
 echo ""
 if [[ "$TIERS_AVAILABLE" == "hot" ]]; then
-    echo "NOTE: Only hot tier (nvme-fast) is active."
+    echo "NOTE: Only hot tier (nfs-fast) is active."
     echo "      To enable warm/cold tiers, ensure these storage classes exist:"
     echo "        - nfs-data (for warm tier)"
     echo "        - nfs-archive (for cold tier)"

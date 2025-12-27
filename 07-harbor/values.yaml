@@ -29,13 +29,13 @@ persistence:
   enabled: true
   persistentVolumeClaim:
     registry:
-      storageClass: nvme-fast
+      storageClass: nfs-fast
       size: 100Gi
     jobservice:
-      storageClass: nvme-fast
+      storageClass: nfs-fast
       size: 5Gi
     trivy:
-      storageClass: nvme-fast
+      storageClass: nfs-fast
       size: 5Gi
 
 # Enable Trivy vulnerability scanning

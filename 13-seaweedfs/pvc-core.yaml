@@ -1,4 +1,4 @@
-# Core PVCs - always required (uses nvme-fast storage)
+# Core PVCs - always required (uses nfs-fast storage)
 
 # Master metadata storage - fast local NVMe for coordination
 apiVersion: v1
@@ -12,7 +12,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: nvme-fast
+  storageClassName: nfs-fast
 ---
 # Filer metadata storage - fast local NVMe for file system metadata
 apiVersion: v1
@@ -26,7 +26,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: nvme-fast
+  storageClassName: nfs-fast
 ---
 # Hot tier volume storage - NVMe for frequently accessed data
 apiVersion: v1
@@ -40,4 +40,4 @@ spec:
   resources:
     requests:
       storage: 50Gi
-  storageClassName: nvme-fast
+  storageClassName: nfs-fast

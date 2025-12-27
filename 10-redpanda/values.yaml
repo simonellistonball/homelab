@@ -9,7 +9,7 @@ storage:
   persistentVolume:
     enabled: true
     size: 50Gi
-    storageClass: nvme-fast
+    storageClass: nfs-fast
 
 # Resource configuration
 resources:
