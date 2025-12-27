@@ -20,7 +20,7 @@ kubectl create secret generic immich-secrets \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # Note: Root CA trust is automatically distributed by trust-manager
-# via the homelab-ca-bundle ConfigMap
+# via the simonellistonball-ca-bundle ConfigMap
 
 # Wait for certificate to be ready
 echo "Waiting for certificate to be ready..."

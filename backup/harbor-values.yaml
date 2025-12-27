@@ -1,0 +1,39 @@
+USER-SUPPLIED VALUES:
+database:
+  external:
+    coreDatabase: harbor
+    host: 192.168.1.103
+    notaryServerDatabase: harbor_notary_server
+    notarySignerDatabase: harbor_notary_signer
+    password: harbor-secret
+    port: "5432"
+    username: harbor
+  type: external
+expose:
+  tls:
+    enabled: false
+  type: clusterIP
+externalURL: https://harbor.apps.house.simonellistonball.com
+harborAdminPassword: Harbor-Admin-2024!
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+notary:
+  enabled: false
+persistence:
+  enabled: true
+  persistentVolumeClaim:
+    jobservice:
+      size: 5Gi
+      storageClass: nfs-fast
+    registry:
+      size: 100Gi
+      storageClass: nfs-fast
+    trivy:
+      size: 5Gi
+      storageClass: nfs-fast
+redis:
+  type: internal
+trivy:
+  enabled: true

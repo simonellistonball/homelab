@@ -95,4 +95,4 @@ spec:
             claimName: immich-upload
         - name: homelab-ca
           configMap:
-            name: homelab-ca-bundle
+            name: simonellistonball-ca-bundle

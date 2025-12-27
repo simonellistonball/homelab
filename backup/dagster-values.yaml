@@ -1,0 +1,42 @@
+USER-SUPPLIED VALUES:
+dagster-user-deployments:
+  deployments:
+  - dagsterApiGrpcArgs:
+    - -m
+    - osm_pipeline.definitions
+    envConfigMaps:
+    - name: osm-pipeline-storage-config
+    envSecrets:
+    - name: osm-pipeline-postgres-secret
+    image:
+      pullPolicy: Always
+      repository: harbor.apps.house.simonellistonball.com/dagster/osm-pipeline
+      tag: latest
+    imagePullSecrets:
+    - name: harbor-pull
+    includeConfigInLaunchedRuns:
+      enabled: true
+    name: osm-pipeline
+    port: 4000
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  enableSubchart: true
+  enabled: true
+dagsterDaemon:
+  enabled: true
+dagsterWebserver:
+  replicaCount: 1
+ingress:
+  enabled: false
+postgresql:
+  enabled: false
+  postgresqlDatabase: dagster
+  postgresqlHost: 192.168.1.103
+  postgresqlPassword: dagster-secret
+  postgresqlPort: 5432
+  postgresqlUsername: dagster

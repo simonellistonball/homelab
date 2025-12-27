@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "19"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"litellm","namespace":"ai"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"litellm"}},"template":{"metadata":{"labels":{"app":"litellm"}},"spec":{"containers":[{"args":["--config","/etc/litellm/config.yaml","--port","4000"],"env":[{"name":"LITELLM_MASTER_KEY","value":"sk-homelab-master"},{"name":"DATABASE_URL","value":"postgresql://litellm:litellm-secret@postgres.house.simonellistonball.com:5432/litellm"},{"name":"LITELLM_SALT_KEY","value":"sk-salt-homelab-1234"}],"image":"ghcr.io/berriai/litellm:main-latest","livenessProbe":{"httpGet":{"path":"/health/liveliness","port":4000},"initialDelaySeconds":60,"periodSeconds":30},"name":"litellm","ports":[{"containerPort":4000,"name":"http"}],"readinessProbe":{"httpGet":{"path":"/health/readiness","port":4000},"initialDelaySeconds":30,"periodSeconds":10},"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"512Mi"}},"volumeMounts":[{"mountPath":"/etc/litellm","name":"config"}]}],"volumes":[{"configMap":{"name":"litellm-config"},"name":"config"}]}}}}
+  creationTimestamp: "2025-12-21T14:11:46Z"
+  generation: 19
+  name: litellm
+  namespace: ai
+  resourceVersion: "354178"
+  uid: 8c93361c-f598-4e11-99ea-94eb48472a0c
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: litellm
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-12-22T12:17:57Z"
+      creationTimestamp: null
+      labels:
+        app: litellm
+    spec:
+      containers:
+      - args:
+        - --config
+        - /etc/litellm/config.yaml
+        - --port
+        - "4000"
+        env:
+        - name: LITELLM_MASTER_KEY
+          value: sk-homelab-master
+        - name: DATABASE_URL
+          value: postgresql://litellm:litellm-secret@postgres.house.simonellistonball.com:5432/litellm
+        - name: LITELLM_SALT_KEY
+          value: sk-salt-homelab-1234
+        image: ghcr.io/berriai/litellm:main-latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/liveliness
+            port: 4000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: litellm
+        ports:
+        - containerPort: 4000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/readiness
+            port: 4000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/litellm
+          name: config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: litellm-config
+        name: config
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-12-21T14:11:46Z"
+    lastUpdateTime: "2025-12-22T12:18:29Z"
+    message: ReplicaSet "litellm-b9bc869bf" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2025-12-23T17:45:40Z"
+    lastUpdateTime: "2025-12-23T17:45:40Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 19
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

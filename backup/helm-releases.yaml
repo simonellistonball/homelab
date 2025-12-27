@@ -1,0 +1,70 @@
+- app_version: 4.12.1
+  chart: csi-driver-nfs-4.12.1
+  name: csi-driver-nfs
+  namespace: kube-system
+  revision: "1"
+  status: deployed
+  updated: 2025-12-20 23:11:32.63704873 +0000 UTC
+- app_version: 1.12.7
+  chart: dagster-1.12.7
+  name: dagster
+  namespace: dagster
+  revision: "3"
+  status: deployed
+  updated: 2025-12-22 18:08:03.416228 +0000 UTC
+- app_version: 1.24.6
+  chart: gitea-12.4.0
+  name: gitea
+  namespace: default
+  revision: "1"
+  status: deployed
+  updated: 2025-12-22 19:58:00.260721065 +0000 UTC
+- app_version: 1.24.6
+  chart: gitea-12.4.0
+  name: gitea
+  namespace: gitea
+  revision: "4"
+  status: deployed
+  updated: 2025-12-23 15:18:08.912519343 +0000 UTC
+- app_version: 2.14.1
+  chart: harbor-1.18.1
+  name: harbor
+  namespace: harbor
+  revision: "1"
+  status: deployed
+  updated: 2025-12-22 13:26:43.605855598 +0000 UTC
+- app_version: 3.6.3
+  chart: loki-6.49.0
+  name: loki
+  namespace: monitoring
+  revision: "1"
+  status: deployed
+  updated: 2025-12-21 04:58:49.860958739 +0000 UTC
+- app_version: v0.87.1
+  chart: kube-prometheus-stack-80.6.0
+  name: prometheus
+  namespace: monitoring
+  revision: "1"
+  status: deployed
+  updated: 2025-12-21 04:50:35.089532294 +0000 UTC
+- app_version: 3.5.1
+  chart: promtail-6.17.1
+  name: promtail
+  namespace: monitoring
+  revision: "1"
+  status: deployed
+  updated: 2025-12-21 04:35:39.309099151 +0000 UTC
+- app_version: v25.3.1
+  chart: redpanda-25.3.1
+  name: redpanda
+  namespace: redpanda
+  revision: "2"
+  status: deployed
+  updated: 2025-12-22 13:10:18.394198623 +0000 UTC
+- app_version: v3.6.5
+  chart: traefik-38.0.1
+  name: traefik
+  namespace: traefik
+  revision: "6"
+  status: deployed
+  updated: 2025-12-21 03:22:26.472360322 +0000 UTC

@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "21"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"n8n","namespace":"n8n"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"n8n"}},"strategy":{"type":"Recreate"},"template":{"metadata":{"labels":{"app":"n8n"}},"spec":{"containers":[{"env":[{"name":"N8N_PORT","value":"5678"},{"name":"DB_TYPE","value":"postgresdb"},{"name":"DB_POSTGRESDB_HOST","value":"192.168.1.103"},{"name":"DB_POSTGRESDB_PORT","value":"5432"},{"name":"DB_POSTGRESDB_DATABASE","value":"n8n"},{"name":"DB_POSTGRESDB_USER","value":"n8n"},{"name":"DB_POSTGRESDB_PASSWORD","valueFrom":{"secretKeyRef":{"key":"DB_POSTGRESDB_PASSWORD","name":"n8n-secrets"}}},{"name":"N8N_ENCRYPTION_KEY","valueFrom":{"secretKeyRef":{"key":"N8N_ENCRYPTION_KEY","name":"n8n-secrets"}}},{"name":"N8N_HOST","value":"n8n.apps.house.simonellistonball.com"},{"name":"N8N_PROTOCOL","value":"https"},{"name":"WEBHOOK_URL","value":"https://n8n.apps.house.simonellistonball.com/"},{"name":"GENERIC_TIMEZONE","value":"Europe/London"},{"name":"NODE_EXTRA_CA_CERTS","value":"/etc/ssl/certs/root-ca.crt"}],"image":"n8nio/n8n:latest","name":"n8n","ports":[{"containerPort":5678}],"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}},"volumeMounts":[{"mountPath":"/home/node/.n8n","name":"data"},{"mountPath":"/etc/ssl/certs/root-ca.crt","name":"root-ca","readOnly":true,"subPath":"ca.crt"}]}],"initContainers":[{"command":["sh","-c","chown -R 1000:1000 /home/node/.n8n"],"image":"busybox","name":"fix-permissions","volumeMounts":[{"mountPath":"/home/node/.n8n","name":"data"}]}],"securityContext":{"fsGroup":1000},"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"n8n-data"}},{"name":"root-ca","secret":{"secretName":"root-ca"}}]}}}}
+  creationTimestamp: "2025-12-22T11:04:55Z"
+  generation: 23
+  name: n8n
+  namespace: n8n
+  resourceVersion: "356449"
+  uid: bc9c07ea-18c8-4eb1-9ca4-e5528efc70fe
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: n8n
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-12-23T17:57:17Z"
+      creationTimestamp: null
+      labels:
+        app: n8n
+    spec:
+      containers:
+      - env:
+        - name: N8N_PORT
+          value: "5678"
+        - name: DB_TYPE
+          value: postgresdb
+        - name: DB_POSTGRESDB_HOST
+          value: 192.168.1.103
+        - name: DB_POSTGRESDB_PORT
+          value: "5432"
+        - name: DB_POSTGRESDB_DATABASE
+          value: n8n
+        - name: DB_POSTGRESDB_USER
+          value: n8n
+        - name: DB_POSTGRESDB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: DB_POSTGRESDB_PASSWORD
+              name: n8n-secrets
+        - name: N8N_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              key: N8N_ENCRYPTION_KEY
+              name: n8n-secrets
+        - name: N8N_HOST
+          value: n8n.apps.house.simonellistonball.com
+        - name: N8N_PROTOCOL
+          value: https
+        - name: WEBHOOK_URL
+          value: https://n8n.apps.house.simonellistonball.com/
+        - name: GENERIC_TIMEZONE
+          value: Europe/London
+        - name: NODE_EXTRA_CA_CERTS
+          value: /etc/ssl/certs/root-ca.crt
+        image: n8nio/n8n:latest
+        imagePullPolicy: Always
+        name: n8n
+        ports:
+        - containerPort: 5678
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/node/.n8n
+          name: data
+        - mountPath: /etc/ssl/certs/root-ca.crt
+          name: root-ca
+          readOnly: true
+          subPath: ca.crt
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - chown -R 1000:1000 /home/node/.n8n
+        image: busybox
+        imagePullPolicy: Always
+        name: fix-permissions
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/node/.n8n
+          name: data
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: n8n-data
+      - name: root-ca
+        secret:
+          defaultMode: 420
+          secretName: root-ca
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-12-23T17:59:25Z"
+    lastUpdateTime: "2025-12-23T17:59:25Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-12-22T11:04:55Z"
+    lastUpdateTime: "2025-12-23T17:59:25Z"
+    message: ReplicaSet "n8n-7cd55555fc" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 23
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

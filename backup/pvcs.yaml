@@ -1,0 +1,867 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"huggingface-cache","namespace":"ai"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"100Gi"}},"storageClassName":"","volumeName":"huggingface-cache-pv"}}
+    creationTimestamp: "2025-12-22T22:26:08Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: huggingface-cache
+    namespace: ai
+    resourceVersion: "213002"
+    uid: 8ee890e7-e8de-4423-8a30-14ca4a24d56b
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: ""
+    volumeMode: Filesystem
+    volumeName: huggingface-cache-pv
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"litellm-data","namespace":"ai"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"1Gi"}},"storageClassName":"local-path"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T15:04:41Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: litellm-data
+    namespace: ai
+    resourceVersion: "62311"
+    uid: ed68f48b-f75c-49a0-a438-14ec4ef259fe
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-ed68f48b-f75c-49a0-a438-14ec4ef259fe
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"postgres-data","namespace":"ai"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"5Gi"}},"storageClassName":"local-path"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T15:10:35Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: postgres-data
+    namespace: ai
+    resourceVersion: "62846"
+    uid: 54ff569d-d6d3-40f5-96d0-0ff1463d3041
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-54ff569d-d6d3-40f5-96d0-0ff1463d3041
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"huggingface-cache","namespace":"dagster"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"100Gi"}},"storageClassName":"","volumeName":"huggingface-cache-pv"}}
+    creationTimestamp: "2025-12-22T22:26:08Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: huggingface-cache
+    namespace: dagster
+    resourceVersion: "213004"
+    uid: 88d9e3be-ef90-4280-91d8-53f7ec0d5e4e
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: ""
+    volumeMode: Filesystem
+    volumeName: huggingface-cache-pv
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"labels":{"app":"osm-pipeline"},"name":"osm-downloads-pvc","namespace":"dagster"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}},"storageClassName":"nfs-data"}}
+      volume.beta.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+      volume.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+    creationTimestamp: "2025-12-22T19:04:29Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: osm-pipeline
+    name: osm-downloads-pvc
+    namespace: dagster
+    resourceVersion: "189578"
+    uid: cf904df4-83e3-4303-b88f-557d95bc3424
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: nfs-data
+    volumeMode: Filesystem
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"labels":{"app":"osm-pipeline"},"name":"osm-output-pvc","namespace":"dagster"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"5Gi"}},"storageClassName":"nfs-data"}}
+      volume.beta.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+      volume.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+    creationTimestamp: "2025-12-22T19:04:29Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: osm-pipeline
+    name: osm-output-pvc
+    namespace: dagster
+    resourceVersion: "189587"
+    uid: 22c270b1-9c4e-46b1-bdaa-f7b76480e1fc
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: nfs-data
+    volumeMode: Filesystem
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"labels":{"app":"osm-pipeline"},"name":"osm-scratch-pvc","namespace":"dagster"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"20Gi"}},"storageClassName":"nvme-fast"}}
+    creationTimestamp: "2025-12-22T18:01:18Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: osm-pipeline
+    name: osm-scratch-pvc
+    namespace: dagster
+    resourceVersion: "181843"
+    uid: faf7bdd7-ccce-4b41-bcac-b57ba1b5af20
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: nvme-fast
+    volumeMode: Filesystem
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"labels":{"app":"osm-pipeline"},"name":"osm-temp-pvc","namespace":"dagster"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"5Gi"}},"storageClassName":"scratch"}}
+    creationTimestamp: "2025-12-22T18:01:18Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: osm-pipeline
+    name: osm-temp-pvc
+    namespace: dagster
+    resourceVersion: "181841"
+    uid: 795bd496-e1dd-4ee4-b06a-0dca67b8655a
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: scratch
+    volumeMode: Filesystem
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      helm.sh/resource-policy: keep
+      meta.helm.sh/release-name: gitea
+      meta.helm.sh/release-namespace: default
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T19:58:00Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: gitea-shared-storage
+    namespace: default
+    resourceVersion: "196975"
+    uid: 548be695-2f6e-42f8-8325-14a309690c25
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-548be695-2f6e-42f8-8325-14a309690c25
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 20Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"frigate-config","namespace":"frigate"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"1Gi"}},"storageClassName":"local-path"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T02:08:43Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: frigate-config
+    namespace: frigate
+    resourceVersion: "104699"
+    uid: cb0e107b-3691-4ba7-baca-f983abe2c20a
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-cb0e107b-3691-4ba7-baca-f983abe2c20a
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"frigate-data","namespace":"frigate"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"500Gi"}},"storageClassName":"nfs-surveillance"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+      volume.kubernetes.io/storage-provisioner: nfs.csi.k8s.io
+    creationTimestamp: "2025-12-22T01:57:40Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: frigate-data
+    namespace: frigate
+    resourceVersion: "104352"
+    uid: 43cab7cf-ffc1-4dec-bcd1-1dea6170fbdc
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 500Gi
+    storageClassName: nfs-surveillance
+    volumeMode: Filesystem
+    volumeName: frigate-pv
+  status:
+    accessModes:
+    - ReadWriteMany
+    capacity:
+      storage: 500Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"runner-data","namespace":"gitea-runner"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"20Gi"}}}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-23T02:14:42Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: runner-data
+    namespace: gitea-runner
+    resourceVersion: "238482"
+    uid: 43cf6ba0-f342-4a4a-8e3e-2a1914fdf3d8
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-43cf6ba0-f342-4a4a-8e3e-2a1914fdf3d8
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 20Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      helm.sh/resource-policy: keep
+      meta.helm.sh/release-name: gitea
+      meta.helm.sh/release-namespace: gitea
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T19:58:10Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: gitea-shared-storage
+    namespace: gitea
+    resourceVersion: "197058"
+    uid: c91621af-5d91-4bc8-82e9-c019cca33eb1
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-c91621af-5d91-4bc8-82e9-c019cca33eb1
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 20Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T13:26:44Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: harbor
+      chart: harbor
+      component: redis
+      heritage: Helm
+      release: harbor
+    name: data-harbor-redis-0
+    namespace: harbor
+    resourceVersion: "153304"
+    uid: dc49101d-c21e-4fc2-9bb7-c2aec6a9c94f
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-dc49101d-c21e-4fc2-9bb7-c2aec6a9c94f
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T13:26:44Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: harbor
+      chart: harbor
+      component: trivy
+      heritage: Helm
+      release: harbor
+    name: data-harbor-trivy-0
+    namespace: harbor
+    resourceVersion: "153275"
+    uid: 2a0b687f-caa6-456a-82df-00f48aec0735
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: nfs-fast
+    volumeMode: Filesystem
+    volumeName: pvc-2a0b687f-caa6-456a-82df-00f48aec0735
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      helm.sh/resource-policy: keep
+      meta.helm.sh/release-name: harbor
+      meta.helm.sh/release-namespace: harbor
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T13:26:44Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: harbor
+      app.kubernetes.io/component: jobservice
+      app.kubernetes.io/instance: harbor
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: harbor
+      app.kubernetes.io/part-of: harbor
+      app.kubernetes.io/version: 2.14.1
+      chart: harbor
+      component: jobservice
+      heritage: Helm
+      release: harbor
+    name: harbor-jobservice
+    namespace: harbor
+    resourceVersion: "153294"
+    uid: a6c51027-a6af-4cbf-bf75-ad6d3f30550d
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-a6c51027-a6af-4cbf-bf75-ad6d3f30550d
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      helm.sh/resource-policy: keep
+      meta.helm.sh/release-name: harbor
+      meta.helm.sh/release-namespace: harbor
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T13:26:44Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app: harbor
+      app.kubernetes.io/component: registry
+      app.kubernetes.io/instance: harbor
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: harbor
+      app.kubernetes.io/part-of: harbor
+      app.kubernetes.io/version: 2.14.1
+      chart: harbor
+      component: registry
+      heritage: Helm
+      release: harbor
+    name: harbor-registry
+    namespace: harbor
+    resourceVersion: "153314"
+    uid: 1bd7c51d-0d68-4489-bcf2-66b86c18ebac
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: nfs-fast
+    volumeMode: Filesystem
+    volumeName: pvc-1bd7c51d-0d68-4489-bcf2-66b86c18ebac
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 100Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"huggingface-cache","namespace":"ml-cache"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"100Gi"}},"storageClassName":"nvme-fast"}}
+    creationTimestamp: "2025-12-22T22:20:27Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: huggingface-cache
+    namespace: ml-cache
+    resourceVersion: "212324"
+    uid: 83813bea-3090-4676-ad0f-a2222e456894
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: nvme-fast
+    volumeMode: Filesystem
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T04:50:39Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      alertmanager: prometheus-kube-prometheus-alertmanager
+      app.kubernetes.io/instance: prometheus-kube-prometheus-alertmanager
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: alertmanager
+    name: alertmanager-prometheus-kube-prometheus-alertmanager-db-alertmanager-prometheus-kube-prometheus-alertmanager-0
+    namespace: monitoring
+    resourceVersion: "22785"
+    uid: 4c7adcd1-c7f8-42dd-aac9-8c42b4980354
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-4c7adcd1-c7f8-42dd-aac9-8c42b4980354
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: prometheus
+      meta.helm.sh/release-namespace: monitoring
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T04:50:38Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/version: 12.3.0
+      helm.sh/chart: grafana-10.4.0
+    name: prometheus-grafana
+    namespace: monitoring
+    resourceVersion: "22798"
+    uid: fffde660-e131-4caf-94c4-54221fe9ceea
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-fffde660-e131-4caf-94c4-54221fe9ceea
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 5Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T04:50:39Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/instance: prometheus-kube-prometheus-prometheus
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: prometheus
+      operator.prometheus.io/name: prometheus-kube-prometheus-prometheus
+      operator.prometheus.io/shard: "0"
+      prometheus: prometheus-kube-prometheus-prometheus
+    name: prometheus-prometheus-kube-prometheus-prometheus-db-prometheus-prometheus-kube-prometheus-prometheus-0
+    namespace: monitoring
+    resourceVersion: "22792"
+    uid: 4e08ceae-b5cf-47e9-8519-0c0da4d63908
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-4e08ceae-b5cf-47e9-8519-0c0da4d63908
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 20Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-21T04:58:50Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/component: single-binary
+      app.kubernetes.io/instance: loki
+      app.kubernetes.io/name: loki
+    name: storage-loki-0
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: loki
+      uid: 225d0cb4-bf46-494b-8a2c-84738c05bf11
+    resourceVersion: "23513"
+    uid: d0bb7d94-3894-48d3-b141-d0b02f6a6191
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+    volumeName: pvc-d0bb7d94-3894-48d3-b141-d0b02f6a6191
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 20Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"n8n-data","namespace":"n8n"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}},"storageClassName":"nvme-fast"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T11:18:56Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: n8n-data
+    namespace: n8n
+    resourceVersion: "145949"
+    uid: fdd45ed4-c407-4a86-a4bc-8bb0d8efbf71
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: nvme-fast
+    volumeMode: Filesystem
+    volumeName: pvc-fdd45ed4-c407-4a86-a4bc-8bb0d8efbf71
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 10Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"redis-data","namespace":"redis"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}},"storageClassName":"nvme-fast"}}
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T19:46:44Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: redis-data
+    namespace: redis
+    resourceVersion: "194739"
+    uid: 78bec894-3625-43bf-a6c7-86b02de99847
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: nvme-fast
+    volumeMode: Filesystem
+    volumeName: pvc-78bec894-3625-43bf-a6c7-86b02de99847
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 10Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: rancher.io/local-path
+      volume.kubernetes.io/selected-node: k8s
+      volume.kubernetes.io/storage-provisioner: rancher.io/local-path
+    creationTimestamp: "2025-12-22T13:07:40Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    labels:
+      app.kubernetes.io/component: redpanda-statefulset
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: redpanda
+    name: datadir-redpanda-0
+    namespace: redpanda
+    resourceVersion: "150873"
+    uid: b47e8c00-58df-4388-9177-80bc3c72afca
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 50Gi
+    storageClassName: nvme-fast
+    volumeMode: Filesystem
+    volumeName: pvc-b47e8c00-58df-4388-9177-80bc3c72afca
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 50Gi
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"huggingface-cache","namespace":"whisper"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"100Gi"}},"storageClassName":"","volumeName":"huggingface-cache-pv"}}
+      pv.kubernetes.io/bind-completed: "yes"
+    creationTimestamp: "2025-12-22T22:24:23Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    name: huggingface-cache
+    namespace: whisper
+    resourceVersion: "212741"
+    uid: da6d7e7e-8676-4a12-9832-b5b4c0294576
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: ""
+    volumeMode: Filesystem
+    volumeName: huggingface-cache-pv
+  status:
+    accessModes:
+    - ReadWriteMany
+    capacity:
+      storage: 100Gi
+    phase: Bound
+kind: List
+metadata:
+  resourceVersion: ""

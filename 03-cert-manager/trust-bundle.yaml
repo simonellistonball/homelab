@@ -3,7 +3,7 @@
 apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
-  name: homelab-ca-bundle
+  name: simonellistonball-ca-bundle
 spec:
   sources:
     # Include the root CA certificate for trust verification
@@ -12,7 +12,7 @@ spec:
         name: "root-ca-configmap"
         key: "root-ca.crt"
   target:
-    # Create a ConfigMap named 'homelab-ca-bundle' in all namespaces
+    # Create a ConfigMap named 'simonellistonball-ca-bundle' in all namespaces
     configMap:
       key: "ca-certificates.crt"
     # Also add to the default CA bundle location for convenience

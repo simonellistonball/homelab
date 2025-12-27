@@ -1,0 +1,545 @@
+apiVersion: v1
+items:
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"ai-cert","namespace":"ai"},"spec":{"commonName":"llm.apps.house.simonellistonball.com","dnsNames":["llm.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"ai-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T14:12:08Z"
+    generation: 1
+    name: ai-cert
+    namespace: ai
+    resourceVersion: "58464"
+    uid: 7840bf5f-91cf-4dd8-abce-8f3a8597d1cd
+  spec:
+    commonName: llm.apps.house.simonellistonball.com
+    dnsNames:
+    - llm.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: ai-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T14:12:08Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T14:12:08Z"
+    notBefore: "2025-12-21T14:12:08Z"
+    renewalTime: "2026-02-19T14:12:08Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"nas-cert","namespace":"cert-manager"},"spec":{"commonName":"nas.house.simonellistonball.com","dnsNames":["nas.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"nas-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T03:56:30Z"
+    generation: 1
+    name: nas-cert
+    namespace: cert-manager
+    resourceVersion: "17438"
+    uid: 550b71ac-f5f9-445c-a90c-2911f9bbbf93
+  spec:
+    commonName: nas.house.simonellistonball.com
+    dnsNames:
+    - nas.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: nas-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T03:56:30Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T03:56:30Z"
+    notBefore: "2025-12-21T03:56:30Z"
+    renewalTime: "2026-02-19T03:56:30Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"proxmox-cert","namespace":"cert-manager"},"spec":{"commonName":"proxmox.house.simonellistonball.com","dnsNames":["proxmox.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"proxmox-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T03:56:30Z"
+    generation: 1
+    name: proxmox-cert
+    namespace: cert-manager
+    resourceVersion: "17442"
+    uid: a56263e5-5466-4979-abbf-20fa8df51dfb
+  spec:
+    commonName: proxmox.house.simonellistonball.com
+    dnsNames:
+    - proxmox.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: proxmox-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T03:56:30Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T03:56:30Z"
+    notBefore: "2025-12-21T03:56:30Z"
+    renewalTime: "2026-02-19T03:56:30Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"unifi-cert","namespace":"cert-manager"},"spec":{"commonName":"unifi.house.simonellistonball.com","dnsNames":["unifi.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"unifi-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T04:01:39Z"
+    generation: 1
+    name: unifi-cert
+    namespace: cert-manager
+    resourceVersion: "17785"
+    uid: af8c9ac3-bace-43d0-894d-bf6e8903dafa
+  spec:
+    commonName: unifi.house.simonellistonball.com
+    dnsNames:
+    - unifi.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: unifi-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T04:01:39Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T04:01:39Z"
+    notBefore: "2025-12-21T04:01:39Z"
+    renewalTime: "2026-02-19T04:01:39Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"dagster-cert","namespace":"dagster"},"spec":{"commonName":"dagster.apps.house.simonellistonball.com","dnsNames":["dagster.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"dagster-tls"}}
+    creationTimestamp: "2025-12-22T16:07:19Z"
+    generation: 1
+    name: dagster-cert
+    namespace: dagster
+    resourceVersion: "169818"
+    uid: 0a608e9a-c08d-407d-87a2-ca34ce17954a
+  spec:
+    commonName: dagster.apps.house.simonellistonball.com
+    dnsNames:
+    - dagster.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: dagster-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T16:07:19Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T16:07:19Z"
+    notBefore: "2025-12-22T16:07:19Z"
+    renewalTime: "2026-02-20T16:07:19Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"test-cert","namespace":"default"},"spec":{"commonName":"test.apps.house.simonellistonball.com","dnsNames":["test.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"test-tls"}}
+    creationTimestamp: "2025-12-23T17:55:38Z"
+    generation: 1
+    name: test-cert
+    namespace: default
+    resourceVersion: "355849"
+    uid: 24b22bd2-6433-4834-89bc-8e78fcaf01b4
+  spec:
+    commonName: test.apps.house.simonellistonball.com
+    dnsNames:
+    - test.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: test-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-23T17:55:38Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-23T17:55:38Z"
+    notBefore: "2025-12-23T17:55:38Z"
+    renewalTime: "2026-02-21T17:55:38Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"frigate-cert","namespace":"frigate"},"spec":{"commonName":"frigate.apps.house.simonellistonball.com","dnsNames":["frigate.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"frigate-tls"}}
+    creationTimestamp: "2025-12-22T01:57:40Z"
+    generation: 1
+    name: frigate-cert
+    namespace: frigate
+    resourceVersion: "103815"
+    uid: 6603bf2e-1a99-431c-9059-661336b26e35
+  spec:
+    commonName: frigate.apps.house.simonellistonball.com
+    dnsNames:
+    - frigate.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: frigate-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T01:57:41Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T01:57:40Z"
+    notBefore: "2025-12-22T01:57:40Z"
+    renewalTime: "2026-02-20T01:57:40Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"gitea-cert","namespace":"gitea"},"spec":{"commonName":"gitea.apps.house.simonellistonball.com","dnsNames":["gitea.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"gitea-tls"}}
+    creationTimestamp: "2025-12-22T18:44:17Z"
+    generation: 1
+    name: gitea-cert
+    namespace: gitea
+    resourceVersion: "186690"
+    uid: 11f3ae1a-bbaa-445c-bcc6-afb12697bf60
+  spec:
+    commonName: gitea.apps.house.simonellistonball.com
+    dnsNames:
+    - gitea.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: gitea-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T18:44:17Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T18:44:17Z"
+    notBefore: "2025-12-22T18:44:17Z"
+    renewalTime: "2026-02-20T18:44:17Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"harbor-cert","namespace":"harbor"},"spec":{"commonName":"harbor.apps.house.simonellistonball.com","dnsNames":["harbor.apps.house.simonellistonball.com","notary.harbor.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"harbor-tls"}}
+    creationTimestamp: "2025-12-22T13:24:52Z"
+    generation: 1
+    name: harbor-cert
+    namespace: harbor
+    resourceVersion: "152861"
+    uid: 9d98f11b-1cad-4e32-9e0a-d3cff873f3ef
+  spec:
+    commonName: harbor.apps.house.simonellistonball.com
+    dnsNames:
+    - harbor.apps.house.simonellistonball.com
+    - notary.harbor.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: harbor-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T13:24:53Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T13:24:53Z"
+    notBefore: "2025-12-22T13:24:53Z"
+    renewalTime: "2026-02-20T13:24:53Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"monitoring-cert","namespace":"monitoring"},"spec":{"commonName":"grafana.apps.house.simonellistonball.com","dnsNames":["grafana.apps.house.simonellistonball.com","prometheus.apps.house.simonellistonball.com","alertmanager.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"monitoring-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T04:35:44Z"
+    generation: 1
+    name: monitoring-cert
+    namespace: monitoring
+    resourceVersion: "20613"
+    uid: 1e98f57a-4ade-4ed1-ac02-4e995a891f41
+  spec:
+    commonName: grafana.apps.house.simonellistonball.com
+    dnsNames:
+    - grafana.apps.house.simonellistonball.com
+    - prometheus.apps.house.simonellistonball.com
+    - alertmanager.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: monitoring-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T04:35:45Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T04:35:45Z"
+    notBefore: "2025-12-21T04:35:45Z"
+    renewalTime: "2026-02-19T04:35:45Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"n8n-cert","namespace":"n8n"},"spec":{"commonName":"n8n.apps.house.simonellistonball.com","dnsNames":["n8n.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"n8n-tls"}}
+    creationTimestamp: "2025-12-22T11:04:55Z"
+    generation: 1
+    name: n8n-cert
+    namespace: n8n
+    resourceVersion: "141247"
+    uid: d1479d61-3dc8-4655-8d14-f5fe70a2b0d7
+  spec:
+    commonName: n8n.apps.house.simonellistonball.com
+    dnsNames:
+    - n8n.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: n8n-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T11:04:55Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T11:04:55Z"
+    notBefore: "2025-12-22T11:04:55Z"
+    renewalTime: "2026-02-20T11:04:55Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"redpanda-cert","namespace":"redpanda"},"spec":{"commonName":"redpanda.apps.house.simonellistonball.com","dnsNames":["redpanda.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"redpanda-tls"}}
+    creationTimestamp: "2025-12-22T13:08:43Z"
+    generation: 1
+    name: redpanda-cert
+    namespace: redpanda
+    resourceVersion: "151115"
+    uid: b801fc10-4fc9-4afc-90b2-e4a1ce071975
+  spec:
+    commonName: redpanda.apps.house.simonellistonball.com
+    dnsNames:
+    - redpanda.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: redpanda-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T13:08:43Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T13:08:43Z"
+    notBefore: "2025-12-22T13:08:43Z"
+    renewalTime: "2026-02-20T13:08:43Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"redpanda-console-cert","namespace":"redpanda"},"spec":{"commonName":"redpanda.apps.house.simonellistonball.com","dnsNames":["redpanda.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"redpanda-console-tls"}}
+    creationTimestamp: "2025-12-22T13:06:44Z"
+    generation: 1
+    name: redpanda-console-cert
+    namespace: redpanda
+    resourceVersion: "150728"
+    uid: 99f98032-1a43-41b1-9fc3-a4b9d91f4e5b
+  spec:
+    commonName: redpanda.apps.house.simonellistonball.com
+    dnsNames:
+    - redpanda.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: redpanda-console-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T13:06:44Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T13:06:44Z"
+    notBefore: "2025-12-22T13:06:44Z"
+    renewalTime: "2026-02-20T13:06:44Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"redpanda-internal-cert","namespace":"redpanda"},"spec":{"commonName":"redpanda.redpanda.svc.cluster.local","dnsNames":["redpanda.redpanda.svc.cluster.local","redpanda-0.redpanda.redpanda.svc.cluster.local","*.redpanda.redpanda.svc.cluster.local","redpanda.apps.house.simonellistonball.com","localhost"],"ipAddresses":["127.0.0.1"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"redpanda-tls-internal"}}
+    creationTimestamp: "2025-12-22T13:06:44Z"
+    generation: 1
+    name: redpanda-internal-cert
+    namespace: redpanda
+    resourceVersion: "150720"
+    uid: 2071bda6-d2df-420e-80f6-08387d2783f5
+  spec:
+    commonName: redpanda.redpanda.svc.cluster.local
+    dnsNames:
+    - redpanda.redpanda.svc.cluster.local
+    - redpanda-0.redpanda.redpanda.svc.cluster.local
+    - '*.redpanda.redpanda.svc.cluster.local'
+    - redpanda.apps.house.simonellistonball.com
+    - localhost
+    ipAddresses:
+    - 127.0.0.1
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: redpanda-tls-internal
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T13:06:44Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T13:06:44Z"
+    notBefore: "2025-12-22T13:06:44Z"
+    renewalTime: "2026-02-20T13:06:44Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"apps-house-wildcard","namespace":"traefik"},"spec":{"commonName":"apps.house.simonellistonball.com","dnsNames":["*.apps.house.simonellistonball.com","apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"apps-house-tls","subject":{"organizations":["Simon Elliston Ball"]}}}
+    creationTimestamp: "2025-12-21T03:38:27Z"
+    generation: 1
+    name: apps-house-wildcard
+    namespace: traefik
+    resourceVersion: "16230"
+    uid: 6fa7ebe0-84d0-4be9-9879-aaa10edc1d23
+  spec:
+    commonName: apps.house.simonellistonball.com
+    dnsNames:
+    - '*.apps.house.simonellistonball.com'
+    - apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: apps-house-tls
+    subject:
+      organizations:
+      - Simon Elliston Ball
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-21T03:38:27Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-21T03:38:27Z"
+    notBefore: "2025-12-21T03:38:27Z"
+    renewalTime: "2026-02-19T03:38:27Z"
+    revision: 1
+- apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"whisper-cert","namespace":"whisper"},"spec":{"commonName":"whisper.apps.house.simonellistonball.com","dnsNames":["whisper.apps.house.simonellistonball.com"],"issuerRef":{"kind":"ClusterIssuer","name":"ca-issuer"},"secretName":"whisper-tls"}}
+    creationTimestamp: "2025-12-22T22:10:33Z"
+    generation: 1
+    name: whisper-cert
+    namespace: whisper
+    resourceVersion: "211122"
+    uid: 935e899a-26ec-4604-a581-1727b7baff6d
+  spec:
+    commonName: whisper.apps.house.simonellistonball.com
+    dnsNames:
+    - whisper.apps.house.simonellistonball.com
+    issuerRef:
+      kind: ClusterIssuer
+      name: ca-issuer
+    secretName: whisper-tls
+  status:
+    conditions:
+    - lastTransitionTime: "2025-12-22T22:10:33Z"
+      message: Certificate is up to date and has not expired
+      observedGeneration: 1
+      reason: Ready
+      status: "True"
+      type: Ready
+    notAfter: "2026-03-22T22:10:33Z"
+    notBefore: "2025-12-22T22:10:33Z"
+    renewalTime: "2026-02-20T22:10:33Z"
+    revision: 1
+kind: List
+metadata:
+  resourceVersion: ""

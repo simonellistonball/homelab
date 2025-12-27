@@ -1,0 +1,54 @@
+USER-SUPPLIED VALUES:
+gitea:
+  admin:
+    email: admin@house.simonellistonball.com
+    password: Gitea-Admin-2024!
+    username: admin
+  config:
+    actions:
+      ENABLED: true
+    cache:
+      ADAPTER: redis
+      HOST: redis://:redis-secret@10.43.107.32:6379/0
+    database:
+      DB_TYPE: postgres
+      HOST: 192.168.1.103:5432
+      NAME: gitea
+      PASSWD: gitea-secret
+      USER: gitea
+    queue:
+      CONN_STR: redis://:redis-secret@10.43.107.32:6379/2
+      TYPE: redis
+    server:
+      DOMAIN: gitea.apps.house.simonellistonball.com
+      ROOT_URL: https://gitea.apps.house.simonellistonball.com
+      SSH_DOMAIN: gitea.apps.house.simonellistonball.com
+    session:
+      PROVIDER: redis
+      PROVIDER_CONFIG: redis://:redis-secret@10.43.107.32:6379/1
+ingress:
+  enabled: false
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: local-path
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+redis:
+  enabled: false
+redis-cluster:
+  enabled: false
+service:
+  http:
+    port: 3000
+    type: ClusterIP
+  ssh:
+    loadBalancerIP: 192.168.100.122
+    port: 22
+    type: LoadBalancer
+valkey:
+  enabled: false
+valkey-cluster:
+  enabled: false

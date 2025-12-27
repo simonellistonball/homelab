@@ -1,0 +1,58 @@
+USER-SUPPLIED VALUES:
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+          storageClassName: local-path
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    kubeProxy: false
+    kubeScheduler: false
+grafana:
+  additionalDataSources:
+  - access: proxy
+    isDefault: false
+    name: Loki
+    type: loki
+    url: http://loki.monitoring.svc.cluster.local:3100
+  adminPassword: changeme
+  grafana.ini:
+    server:
+      root_url: https://grafana.apps.house.simonellistonball.com
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClassName: local-path
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+kubeStateMetrics:
+  enabled: true
+nodeExporter:
+  enabled: true
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    retention: 15d
+    serviceMonitorSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+          storageClassName: local-path
