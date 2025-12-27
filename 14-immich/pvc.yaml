@@ -1,0 +1,43 @@
+# Photo library storage - use NFS for shared access and large capacity
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-library
+  namespace: immich
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Gi
+  storageClassName: nfs-data
+
+---
+# Upload storage - temporary storage for uploads before processing
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-upload
+  namespace: immich
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: nfs-fast
+
+---
+# Model cache for machine learning
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache
+  namespace: immich
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: nfs-models

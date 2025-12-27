@@ -33,8 +33,7 @@ cat values.yaml | \
 helm upgrade --install gitea gitea-charts/gitea \
   --namespace gitea \
   --create-namespace \
-  -f /tmp/gitea-values.yaml \
-  --wait --timeout 10m
+  -f /tmp/gitea-values.yaml 
 
 rm /tmp/gitea-values.yaml
 

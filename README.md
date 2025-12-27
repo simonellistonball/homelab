@@ -26,6 +26,7 @@ A complete infrastructure-as-code setup for a K3s single-node cluster with dual-
 | **Cilium** | CNI with eBPF, dual-stack networking, L2 LoadBalancer |
 | **Traefik** | Ingress controller with automatic TLS |
 | **cert-manager** | Private CA for internal TLS certificates |
+| **trust-manager** | Distributes CA trust bundle cluster-wide |
 | **Redis** | In-memory cache/database |
 | **Prometheus/Grafana/Loki** | Monitoring and logging stack |
 | **Harbor** | Container registry |
@@ -36,6 +37,7 @@ A complete infrastructure-as-code setup for a K3s single-node cluster with dual-
 | **LiteLLM** | LLM API proxy |
 | **Whisper** | Speech-to-text service |
 | **SeaweedFS** | S3-compatible object storage with tiered storage |
+| **Immich** | Self-hosted photo and video management |
 
 ## Prerequisites
 
@@ -68,8 +70,8 @@ vim config.env
 Ensure mount points exist on the K3s node:
 
 ```bash
-sudo mkdir -p /mnt/nvme-fast /mnt/scratch
-sudo chmod 777 /mnt/nvme-fast /mnt/scratch
+sudo mkdir -p /mnt/scratch
+sudo chmod 777 /mnt/scratch
 ```
 
 ### 3. Install K3s
@@ -123,7 +125,8 @@ homelab/
 ├── 10-redpanda/           # Kafka-compatible streaming
 ├── 11-n8n/                # Workflow automation
 ├── 12-ai/                 # LiteLLM + Whisper
-└── 13-seaweedfs/          # S3-compatible object storage
+├── 13-seaweedfs/          # S3-compatible object storage
+└── 14-immich/             # Photo and video management
 ```
 
 ## Network Configuration
@@ -149,7 +152,7 @@ homelab/
 
 | Class | Type | Path | Use Case |
 |-------|------|------|----------|
-| `nvme-fast` | local-path | /mnt/nvme-fast | Databases, caches |
+| `nfs-fast` | NFS | /mnt/fast/data | Databases, caches |
 | `scratch` | local-path | /mnt/scratch | Temporary data |
 | `nfs-data` | NFS | /mnt/data/data | General storage |
 | `nfs-backups` | NFS | /mnt/data/backups | Backups |
@@ -175,6 +178,7 @@ After deployment, services are available at:
 | Whisper | https://whisper.apps.house.simonellistonball.com |
 | SeaweedFS S3 | https://s3.apps.house.simonellistonball.com |
 | SeaweedFS Filer | https://seaweedfs.apps.house.simonellistonball.com |
+| Immich | https://immich.apps.house.simonellistonball.com |
 
 ## PostgreSQL Setup
 
@@ -198,7 +202,7 @@ SeaweedFS provides S3-compatible object storage with tiered storage:
 
 | Tier | Storage Class | Use Case |
 |------|--------------|----------|
-| Hot | nvme-fast | Frequently accessed, performance-critical |
+| Hot | nfs-fast | Frequently accessed, performance-critical |
 | Warm | nfs-data | Regular data |
 | Cold | nfs-archive | Infrequently accessed, archival |
 
