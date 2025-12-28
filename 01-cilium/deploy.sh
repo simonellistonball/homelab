@@ -103,12 +103,15 @@ TMP_L2_ANNOUNCE=$(mktemp)
 trap "rm -f $TMP_VALUES $TMP_IP_POOL $TMP_L2_ANNOUNCE" EXIT
 
 # Default LB pools if not set
-CILIUM_LB_POOL_V4="${CILIUM_LB_POOL_V4:-192.168.100.100/25}"
-CILIUM_LB_POOL_V6="${CILIUM_LB_POOL_V6:-2a0e:cb01:f1:1001::/64}"
+# Note: General pool uses upper range to avoid overlap with dedicated service IPs
+# IPv4: .128-.255 for general services, .0-.127 reserved for specific services (Traefik, etc.)
+# IPv6: :1::/80 for general services, ::/80 reserved for specific services
+CILIUM_LB_POOL_V4="${CILIUM_LB_POOL_V4:-192.168.100.128/25}"
+CILIUM_LB_POOL_V6="${CILIUM_LB_POOL_V6:-2a0e:cb01:f1:1001:1::/80}"
 
-# Default Traefik IPs (pick first usable from each pool if not set)
-TRAEFIK_IP="${TRAEFIK_IP:-192.168.100.111}"
-TRAEFIK_IP_V6="${TRAEFIK_IP_V6:-2a0e:cb01:f1:1001::1}"
+# Default Traefik IPs (from reserved lower range)
+TRAEFIK_IP="${TRAEFIK_IP:-192.168.100.11}"
+TRAEFIK_IP_V6="${TRAEFIK_IP_V6:-2a0e:cb01:f1:1001::b}"
 
 sed -e "s|CILIUM_LB_POOL_V4_PLACEHOLDER|${CILIUM_LB_POOL_V4}|g" \
     -e "s|CILIUM_LB_POOL_V6_PLACEHOLDER|${CILIUM_LB_POOL_V6}|g" \

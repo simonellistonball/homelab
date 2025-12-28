@@ -1,10 +1,14 @@
 # Cilium LoadBalancer IP Pool - Dual Stack
 # Replaces MetalLB IPAddressPool
 #
-# IPv4 Range: 192.168.100.100-192.168.100.227 (/25 = 128 addresses)
-# IPv6 Range: 2a0e:cb01:f1:1001::/64 (public IPv6 for ingress)
+# IP Range Strategy (to avoid CIDR overlap conflicts):
+#   IPv4: General pool uses .128-.255 (/25), specific services use .0-.127
+#   IPv6: General pool uses :1::/80, specific services use ::/80
+#
+# Traefik gets dedicated IPs from traefik-pool below.
+# General pools have serviceSelector to exclude Traefik services.
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: homelab-pool-v4
@@ -15,8 +19,13 @@ spec:
     matchExpressions:
       - key: io.cilium/lb-ipam-ips
         operator: DoesNotExist
+      # Exclude Traefik - it uses dedicated traefik-pool
+      - key: app.kubernetes.io/name
+        operator: NotIn
+        values:
+          - traefik
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: homelab-pool-v6
@@ -27,9 +36,14 @@ spec:
     matchExpressions:
       - key: io.cilium/lb-ipam-ips
         operator: DoesNotExist
+      # Exclude Traefik - it uses dedicated traefik-pool
+      - key: app.kubernetes.io/name
+        operator: NotIn
+        values:
+          - traefik
 ---
 # Pool for Traefik with specific IPs (dual-stack)
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: traefik-pool

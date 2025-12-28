@@ -9,6 +9,12 @@ kind: CiliumL2AnnouncementPolicy
 metadata:
   name: homelab-l2
 spec:
+  # Node selector - required for L2 announcements to work
+  # Matches nodes with the lb-announcer label
+  # Label nodes with: kubectl label nodes <node> homelab/lb-announcer=true
+  nodeSelector:
+    matchLabels:
+      homelab/lb-announcer: "true"
   # Announce LoadBalancer IPs
   loadBalancerIPs: true
   # Announce ExternalIPs
