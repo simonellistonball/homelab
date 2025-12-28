@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-relay
+  namespace: webhook-relay
+  labels:
+    app: webhook-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-relay
+  template:
+    metadata:
+      labels:
+        app: webhook-relay
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      imagePullSecrets:
+        - name: harbor-pull-secret
+      containers:
+        - name: webhook-relay
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 9090
+              name: metrics
+              protocol: TCP
+          env:
+            # AWS Configuration
+            - name: AWS_REGION
+              value: "AWS_REGION_PLACEHOLDER"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: webhook-relay-aws
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: webhook-relay-aws
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: SQS_QUEUE_URL
+              value: "QUEUE_URL_PLACEHOLDER"
+            # Polling Configuration
+            - name: POLL_INTERVAL_MS
+              value: "1000"
+            - name: MAX_MESSAGES
+              value: "10"
+            # Routes Configuration
+            - name: ROUTE_CONFIG_PATH
+              value: "/config/routes.yaml"
+            # Server Configuration
+            - name: HTTP_PORT
+              value: "8080"
+            - name: METRICS_PORT
+              value: "9090"
+            # TLS Configuration - trust internal CA
+            - name: SSL_CERT_FILE
+              value: "/etc/ssl/certs/ca-certificates.crt"
+            # Logging
+            - name: RUST_LOG
+              value: "info,webhook_relay=debug"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: routes-config
+              mountPath: /config
+              readOnly: true
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
+      volumes:
+        - name: routes-config
+          configMap:
+            name: webhook-relay-routes
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000

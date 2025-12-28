@@ -1,0 +1,36 @@
+# Webhook Relay Routes Configuration
+#
+# Each route maps a service name (from the URL path) to a target URL.
+# Webhook URL format: /webhook/<service>/<path>
+#
+# Example: A webhook to /webhook/n8n/my-workflow will be forwarded to
+#          https://n8n.apps.example.com/my-workflow
+
+routes:
+  # n8n workflow automation
+  n8n:
+    url: "https://n8n.apps.house.simonellistonball.com/webhook"
+    timeout_seconds: 30
+
+  # Gitea git server
+  gitea:
+    url: "https://gitea.apps.house.simonellistonball.com/api/webhooks"
+    timeout_seconds: 30
+
+  # Dagster data orchestration
+  dagster:
+    url: "https://dagster.apps.house.simonellistonball.com/sensors"
+    timeout_seconds: 60
+
+  # Add more services as needed:
+  #
+  # custom-service:
+  #   url: "https://custom.apps.house.simonellistonball.com"
+  #   timeout_seconds: 30
+
+# Default behavior for unknown routes
+# action: "drop" - silently drop unknown webhooks
+# action: "forward" - forward to a catch-all URL (requires url field)
+default:
+  action: "drop"
+  # url: "https://default.apps.house.simonellistonball.com/webhooks"

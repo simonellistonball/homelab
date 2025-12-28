@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-relay
+  namespace: webhook-relay
+  labels:
+    app: webhook-relay
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: metrics
+  selector:
+    app: webhook-relay

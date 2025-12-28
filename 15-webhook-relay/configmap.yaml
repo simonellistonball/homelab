@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webhook-relay-routes
+  namespace: webhook-relay
+data:
+  routes.yaml: |
+    # Webhook Relay Routes Configuration
+    routes:
+      # n8n workflow automation
+      # Webhook URL: /webhook/n8n/<workflow-id>
+      n8n:
+        url: "https://n8n.apps.house.simonellistonball.com/webhook"
+        timeout_seconds: 30
+
+      # Gitea git server webhooks
+      # Webhook URL: /webhook/gitea/<path>
+      gitea:
+        url: "https://gitea.apps.house.simonellistonball.com"
+        timeout_seconds: 30
+
+      # Dagster data orchestration sensors
+      # Webhook URL: /webhook/dagster/<sensor-path>
+      dagster:
+        url: "https://dagster.apps.house.simonellistonball.com"
+        timeout_seconds: 60
+
+    # Default behavior for unknown routes
+    default:
+      action: "drop"

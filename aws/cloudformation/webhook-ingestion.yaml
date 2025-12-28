@@ -1,0 +1,266 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Webhook ingestion infrastructure - API Gateway + SQS for homelab webhook relay'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - dev
+      - prod
+    Description: Environment name
+
+  MessageRetentionPeriod:
+    Type: Number
+    Default: 345600
+    Description: SQS message retention in seconds (default 4 days)
+
+  VisibilityTimeout:
+    Type: Number
+    Default: 60
+    Description: SQS visibility timeout in seconds
+
+  DLQRetentionPeriod:
+    Type: Number
+    Default: 1209600
+    Description: DLQ message retention in seconds (default 14 days)
+
+  MaxReceiveCount:
+    Type: Number
+    Default: 3
+    Description: Number of receives before moving to DLQ
+
+Resources:
+  # Dead Letter Queue for failed messages
+  WebhookDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'webhook-queue-dlq-${Environment}'
+      MessageRetentionPeriod: !Ref DLQRetentionPeriod
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: webhook-relay-dlq
+
+  # Main webhook queue
+  WebhookQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'webhook-queue-${Environment}'
+      MessageRetentionPeriod: !Ref MessageRetentionPeriod
+      VisibilityTimeout: !Ref VisibilityTimeout
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt WebhookDLQ.Arn
+        maxReceiveCount: !Ref MaxReceiveCount
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: webhook-relay
+
+  # IAM User for the webhook-relay service to consume messages
+  WebhookRelayUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub 'webhook-relay-consumer-${Environment}'
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: webhook-relay-consumer
+
+  WebhookRelayUserPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub 'webhook-relay-sqs-policy-${Environment}'
+      Users:
+        - !Ref WebhookRelayUser
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Resource: !GetAtt WebhookQueue.Arn
+          - Effect: Allow
+            Action:
+              - sqs:GetQueueAttributes
+            Resource: !GetAtt WebhookDLQ.Arn
+
+  WebhookRelayAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref WebhookRelayUser
+
+  # HTTP API Gateway
+  WebhookApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'webhook-ingestion-${Environment}'
+      Description: Webhook ingestion API for homelab
+      ProtocolType: HTTP
+      Tags:
+        Environment: !Ref Environment
+        Purpose: webhook-relay
+
+  # API Gateway Stage
+  WebhookApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref WebhookApi
+      StageName: '$default'
+      AutoDeploy: true
+
+  # Lambda function to transform the request before sending to SQS
+  # This captures headers, path, query params etc.
+  WebhookTransformFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'webhook-transform-${Environment}'
+      Runtime: python3.11
+      Handler: index.handler
+      Timeout: 10
+      MemorySize: 128
+      Role: !GetAtt WebhookTransformRole.Arn
+      Environment:
+        Variables:
+          QUEUE_URL: !Ref WebhookQueue
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import os
+          from datetime import datetime
+
+          sqs = boto3.client('sqs')
+          QUEUE_URL = os.environ['QUEUE_URL']
+
+          def handler(event, context):
+              # Build the message with full context
+              message = {
+                  'path': event.get('rawPath', '/'),
+                  'method': event.get('requestContext', {}).get('http', {}).get('method', 'POST'),
+                  'headers': dict(event.get('headers', {})),
+                  'body': event.get('body', ''),
+                  'isBase64Encoded': event.get('isBase64Encoded', False),
+                  'queryStringParameters': event.get('queryStringParameters') or {},
+                  'timestamp': datetime.utcnow().isoformat() + 'Z',
+                  'sourceIp': event.get('requestContext', {}).get('http', {}).get('sourceIp', '')
+              }
+
+              # Send to SQS
+              sqs.send_message(
+                  QueueUrl=QUEUE_URL,
+                  MessageBody=json.dumps(message)
+              )
+
+              return {
+                  'statusCode': 202,
+                  'headers': {'Content-Type': 'application/json'},
+                  'body': json.dumps({'status': 'accepted', 'message': 'Webhook queued for processing'})
+              }
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  WebhookTransformRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'webhook-transform-role-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SQSSendMessage
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt WebhookQueue.Arn
+
+  # Lambda Integration for API Gateway
+  WebhookLambdaIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebhookApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt WebhookTransformFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  # Permission for API Gateway to invoke Lambda
+  WebhookLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WebhookTransformFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebhookApi}/*'
+
+  # Route for POST /webhook/{proxy+}
+  WebhookRouteLambda:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: WebhookLambdaIntegration
+    Properties:
+      ApiId: !Ref WebhookApi
+      RouteKey: 'POST /webhook/{proxy+}'
+      Target: !Sub 'integrations/${WebhookLambdaIntegration}'
+
+  # Route for POST /webhook (no trailing path)
+  WebhookRootRouteLambda:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: WebhookLambdaIntegration
+    Properties:
+      ApiId: !Ref WebhookApi
+      RouteKey: 'POST /webhook'
+      Target: !Sub 'integrations/${WebhookLambdaIntegration}'
+
+Outputs:
+  WebhookApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${WebhookApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiEndpoint'
+
+  WebhookQueueUrl:
+    Description: SQS Queue URL for webhook-relay to consume
+    Value: !Ref WebhookQueue
+    Export:
+      Name: !Sub '${AWS::StackName}-QueueUrl'
+
+  WebhookQueueArn:
+    Description: SQS Queue ARN
+    Value: !GetAtt WebhookQueue.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-QueueArn'
+
+  WebhookDLQUrl:
+    Description: Dead Letter Queue URL
+    Value: !Ref WebhookDLQ
+    Export:
+      Name: !Sub '${AWS::StackName}-DLQUrl'
+
+  WebhookRelayAccessKeyId:
+    Description: Access Key ID for webhook-relay service
+    Value: !Ref WebhookRelayAccessKey
+
+  WebhookRelaySecretAccessKey:
+    Description: Secret Access Key for webhook-relay service (store securely!)
+    Value: !GetAtt WebhookRelayAccessKey.SecretAccessKey
+
+  WebhookUrl:
+    Description: Full webhook URL to configure in external services
+    Value: !Sub 'https://${WebhookApi}.execute-api.${AWS::Region}.amazonaws.com/webhook'
+    Export:
+      Name: !Sub '${AWS::StackName}-WebhookUrl'
