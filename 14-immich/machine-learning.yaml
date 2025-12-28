@@ -16,6 +16,10 @@ spec:
       labels:
         app: immich-machine-learning
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
         - name: immich-machine-learning
           image: ghcr.io/immich-app/immich-machine-learning:release

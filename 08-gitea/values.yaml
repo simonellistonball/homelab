@@ -67,6 +67,12 @@ service:
 ingress:
   enabled: false
 
+# DNS config for external DNS resolution
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
 # CA trust bundle from trust-manager
 extraVolumes:
   - name: ca-bundle

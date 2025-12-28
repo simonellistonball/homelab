@@ -17,6 +17,10 @@ spec:
         app: seaweedfs-volume-cold
         tier: cold
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
         - name: volume
           image: chrislusf/seaweedfs:latest

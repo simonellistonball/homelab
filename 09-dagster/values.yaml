@@ -21,6 +21,10 @@ postgresql:
 # Webserver configuration
 dagsterWebserver:
   replicaCount: 1
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
   volumes:
     - name: ca-bundle
       configMap:
@@ -34,6 +38,10 @@ dagsterWebserver:
 # Daemon configuration
 dagsterDaemon:
   enabled: true
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
   volumes:
     - name: ca-bundle
       configMap:
@@ -86,6 +94,10 @@ dagster-user-deployments:
           mountPath: /etc/ssl/certs/ca-certificates.crt
           subPath: ca-certificates.crt
           readOnly: true
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       env:
         - name: SSL_CERT_FILE
           value: /etc/ssl/certs/ca-certificates.crt

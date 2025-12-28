@@ -4,12 +4,20 @@
 statefulset:
   replicas: 1
 
+# DNS configuration for faster lookups
+podTemplate:
+  spec:
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "1"
+
 # Storage configuration
 storage:
   persistentVolume:
     enabled: true
     size: 50Gi
-    storageClass: nfs-fast
+    storageClass: local-path
 
 # Resource configuration
 resources:

@@ -16,6 +16,10 @@ spec:
       labels:
         app: seaweedfs-filer
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
         - name: filer
           image: chrislusf/seaweedfs:latest

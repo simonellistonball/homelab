@@ -53,6 +53,12 @@ metrics:
 caBundleSecretName: ""
 caSecretName: ""
 
+# DNS config for external DNS resolution
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
 # Add CA bundle to core component
 core:
   extraVolumes:

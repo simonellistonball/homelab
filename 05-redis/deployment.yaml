@@ -13,6 +13,10 @@ spec:
       labels:
         app: redis
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
         - name: redis
           image: redis:7-alpine

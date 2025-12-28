@@ -4,6 +4,14 @@
 # Grafana configuration
 grafana:
   adminPassword: GRAFANA_ADMIN_PASSWORD_PLACEHOLDER
+  # Disable init-chown-data - files already have correct ownership (472:472)
+  # and K3s seccomp blocks chown syscall even for root with CAP_CHOWN
+  initChownData:
+    enabled: false
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
   grafana.ini:
     server:
       root_url: https://grafana.apps.house.simonellistonball.com
@@ -38,6 +46,10 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 15d
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "1"
     # Mount CA bundle for scraping internal HTTPS endpoints
     volumes:
       - name: ca-bundle
@@ -63,6 +75,10 @@ prometheus:
 # Alertmanager configuration
 alertmanager:
   alertmanagerSpec:
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "1"
     storage:
       volumeClaimTemplate:
         spec:

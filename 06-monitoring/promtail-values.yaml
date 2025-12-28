@@ -37,3 +37,9 @@ resources:
   limits:
     cpu: 200m
     memory: 128Mi
+
+# DNS config for external DNS resolution
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
