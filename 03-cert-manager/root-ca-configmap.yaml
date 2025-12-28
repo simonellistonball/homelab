@@ -1,13 +1,7 @@
 # Root CA ConfigMap for trust-manager
 # This contains only the root CA certificate for trust distribution
-#
 # GENERATED FILE - Do not edit manually!
 # Regenerate with: ./scripts/generate-ca-secret.sh
-#
-# This file must be regenerated after you set up your CA in the ca/ directory.
-# If you see this placeholder, run:
-#   ./scripts/generate-ca-secret.sh
-#
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,5 +9,39 @@ metadata:
   namespace: cert-manager
 data:
   root-ca.crt: |
-    # PLACEHOLDER - Run ./scripts/generate-ca-secret.sh to generate this file
-    # from your CA in the ca/ directory
+    -----BEGIN CERTIFICATE-----
+    MIIGOTCCBCGgAwIBAgIUIx8hCebEf4pA4SecS0biqju1frswDQYJKoZIhvcNAQEL
+    BQAwgaMxCzAJBgNVBAYTAkdCMRAwDgYDVQQIDAdFbmdsYW5kMRIwEAYDVQQHDAlD
+    YW1icmlkZ2UxHDAaBgNVBAoME1NpbW9uIEVsbGlzdG9uIEJhbGwxJDAiBgNVBAMM
+    G1NpbW9uIEVsbGlzdG9uIEJhbGwgUm9vdCBDQTEqMCgGCSqGSIb3DQEJARYbc2lt
+    b25Ac2ltb25lbGxpc3RvbmJhbGwuY29tMB4XDTI0MDgwNDE3MjAwMloXDTQ0MDcz
+    MDE3MjAwMlowgaMxCzAJBgNVBAYTAkdCMRAwDgYDVQQIDAdFbmdsYW5kMRIwEAYD
+    VQQHDAlDYW1icmlkZ2UxHDAaBgNVBAoME1NpbW9uIEVsbGlzdG9uIEJhbGwxJDAi
+    BgNVBAMMG1NpbW9uIEVsbGlzdG9uIEJhbGwgUm9vdCBDQTEqMCgGCSqGSIb3DQEJ
+    ARYbc2ltb25Ac2ltb25lbGxpc3RvbmJhbGwuY29tMIICIjANBgkqhkiG9w0BAQEF
+    AAOCAg8AMIICCgKCAgEAw7GI4BZUB1ZkqSdfrDx0c5mNiPkDkq7Q3FI78vXxlPW5
+    hWve+jKdQFa4qKFwP0LFROqNPWshYakbw2kSpktxIViutXiBKw6gAM4stQW2LNtg
+    r9qifsGi1bbPF+W0oaNP+gIkT1epyRu6eYlFrACeFLTaoRXZya55VbOxr14/0aho
+    D/HdF+SGQaxPl8YXzFYPzV4O/203QPFQhqNjZgwVo/56x7rEO4MIeIk1ILHykIZ8
+    2tZUA4jyeWfwf2HNkHfP7W3wkgrvzaosYhP5ilrcPZ5WLwHWJbCmAOf31Ix/wHHy
+    H3xEBDLAUpHQd7b2za365a7fVxALIaDDCqSvikJbWxS2wDm10puyfTQoReyprjlS
+    tmGwUR7jj1QSWDH/Hj+zL5MHOhmlIqWfSHLnqILBsewE6o0ZVW10fesf6trINkjC
+    bBgjRGykbkcg3VXFl4+vyWKu/eBr9DrCeKazsrTWgsgTXksMjraEFAWOqlFW5z6p
+    WWTyw1ODAkpW+TD3yJLsEyxQ5eycbBO7ErRqW2dg2piB1KQaycCCkcvXNNBFDH+v
+    3zFOxR4BLMrhXvJdOwqawhRDDvzh+5IxJsQmnpsL2llpPQYolvMCpYX9mnbEVVl+
+    K0nxayRN9t8S4SFCaN1CotDigOOwlSuQxlZ1XWEKenChIp/u3yudhESJlIGBI5sC
+    AwEAAaNjMGEwHQYDVR0OBBYEFMLH8PVStU0Ljl6B69vf1cH+RyaNMB8GA1UdIwQY
+    MBaAFMLH8PVStU0Ljl6B69vf1cH+RyaNMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0P
+    AQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQBayktcqvfCXZgRgDl7ZTn053iy
+    UPKABHzR+dCpRWoI5y/XU9a3F6XzGvpJTU4iE0Vchl5OnKD+057theiAAQ8cBERj
+    ee/EFZdaYve1rG240ydiu7EwzWpIrepJHx+KUYJZ2b1F5gEHOIwr8kj4VA/xzDGi
+    k4c/eoBEpf+dEZm+0pNubNHK9/bncXREvn+3JiZrBoaK80uNJ2+BVxRJhOWmYRwC
+    RuqvChf7dvKHQzfT1vBAK54beDFrxE8iuaN1We1+vPX2KNRhCNKfuGJxtIVjCjnJ
+    0XTYYXRkv72oryPB7q1JnE8eJAZI+DfrLLSET5afMF4wWF1wKiX6GT/4k4+0HOzi
+    KPU8AtOKpMjAfRQ8hOmHperBut6CKOAclGsKn8o8RI+29JuDpUmaU2TTFQWEXHgt
+    T+5McKfVQEsYZlpDac2bTXetkoLidX87YJssuNham2RFaVEeaBRZSVa7gSE0miUF
+    fQgz2uiJLdK8Ahf7O7jUwBtMqe7n4FyOXptjeIwWXgH39Ljm96B2ck+uUYzWYpuL
+    63QDtgh3xIPHM0Y1Ts2aRfRmhdCYK3BRXAomASh9YlFoqoSVgGfmW2UbFBevA0XY
+    FPScNrUJQYgTfgTNLeulpu8RIx/MfBPiV9JLly6LA//Abc9mkdVSJIS3FMpEkcot
+    gjlMpkLqi4Q5MmwOLA==
+    -----END CERTIFICATE-----

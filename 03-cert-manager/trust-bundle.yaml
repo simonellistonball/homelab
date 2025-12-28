@@ -6,7 +6,9 @@ metadata:
   name: simonellistonball-ca-bundle
 spec:
   sources:
-    # Include the root CA certificate for trust verification
+    # Include the default public CA bundle (for AWS, etc.)
+    - useDefaultCAs: true
+    # Include the root CA certificate for internal trust verification
     # This is the root that signed the intermediate CA
     - configMap:
         name: "root-ca-configmap"
