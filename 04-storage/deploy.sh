@@ -67,8 +67,8 @@ echo ""
 echo "Checking NFS server availability..."
 NFS_AVAILABLE=false
 if [ -n "${TRUENAS_IP:-}" ]; then
-    if kubectl run nfs-check-$$ --rm -i --restart=Never --image=busybox -- \
-        timeout 5 sh -c "nc -z ${TRUENAS_IP} 2049" 2>/dev/null; then
+    if kubectl run nfs-check-$$ --rm -i --restart=Never --image=busybox --quiet -- \
+        sh -c "nc -w 5 ${TRUENAS_IP} 2049 </dev/null 2>&1" 2>/dev/null; then
         echo "  ✓ NFS server (${TRUENAS_IP}:2049) is reachable"
         NFS_AVAILABLE=true
     else
