@@ -1,0 +1,487 @@
+# Prometheus Alert Rules for Storage Monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: storage-alerts
+  namespace: monitoring
+  labels:
+    app: storage-monitoring
+    release: prometheus
+spec:
+  groups:
+    # =====================================================
+    # TrueNAS ZFS Pool Health Alerts
+    # =====================================================
+    - name: truenas.zfs
+      rules:
+        - alert: TrueNASZFSPoolDegraded
+          expr: |
+            {__name__=~"scale_truenas_zfspool_state_.*_degraded"} == 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS ZFS pool is degraded"
+            description: "A ZFS pool has entered degraded state. Check disk health immediately. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASZFSPoolFaulted
+          expr: |
+            {__name__=~"scale_truenas_zfspool_state_.*_faulted"} == 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS ZFS pool is faulted"
+            description: "A ZFS pool has faulted! Data may be at risk. Immediate action required. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASZFSPoolOffline
+          expr: |
+            {__name__=~"scale_truenas_zfspool_state_.*_offline"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS ZFS pool is offline"
+            description: "A ZFS pool has gone offline. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASZFSPoolUnavailable
+          expr: |
+            {__name__=~"scale_truenas_zfspool_state_.*_unavail"} == 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS ZFS pool is unavailable"
+            description: "A ZFS pool is unavailable! Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASZFSARCSizeLow
+          expr: |
+            scale_truenas_zfs_arc_size_arcsz < 1024
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS ZFS ARC size is below 1GB"
+            description: "ZFS ARC is only {{ printf \"%.0f\" $value }}MB. Performance may be degraded."
+
+        - alert: TrueNASZFSARCHitRateLow
+          expr: |
+            (scale_truenas_zfs_hits_rate_hits / (scale_truenas_zfs_hits_rate_hits + scale_truenas_zfs_hits_rate_misses)) * 100 < 80
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS ZFS ARC hit rate is low"
+            description: "ZFS ARC hit rate is {{ printf \"%.1f\" $value }}%. Consider adding more RAM."
+
+    # =====================================================
+    # TrueNAS Disk Health Alerts
+    # =====================================================
+    - name: truenas.disks
+      rules:
+        - alert: TrueNASDiskHighLatency
+          expr: |
+            {__name__=~"scale_truenas_disk_await_.*_reads"} > 100
+            or {__name__=~"scale_truenas_disk_await_.*_writes"} > 100
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS disk latency is high"
+            description: "Disk I/O latency is {{ printf \"%.1f\" $value }}ms. Check disk health. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASDiskHighUtilization
+          expr: |
+            {__name__=~"scale_truenas_disk_util_.*_utilization"} > 90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS disk utilization is high"
+            description: "Disk utilization is {{ printf \"%.1f\" $value }}%. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASDiskHighUtilizationCritical
+          expr: |
+            {__name__=~"scale_truenas_disk_util_.*_utilization"} > 98
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS disk utilization is critically high"
+            description: "Disk utilization is {{ printf \"%.1f\" $value }}%. I/O bottleneck likely. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASDiskHighBacklog
+          expr: |
+            {__name__=~"scale_truenas_disk_backlog_.*_backlog"} > 1000
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS disk has high I/O backlog"
+            description: "Disk backlog is {{ printf \"%.0f\" $value }}ms. I/O queue is saturated. Metric: {{ $labels.__name__ }}"
+
+    # =====================================================
+    # TrueNAS CPU Temperature Alerts
+    # =====================================================
+    - name: truenas.temperature
+      rules:
+        - alert: TrueNASCPUTemperatureHigh
+          expr: |
+            {__name__=~"scale_truenas_cputemp_temperatures_.*"} > 75
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS CPU temperature is high"
+            description: "CPU temperature is {{ printf \"%.1f\" $value }}C. Check cooling. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASCPUTemperatureCritical
+          expr: |
+            {__name__=~"scale_truenas_cputemp_temperatures_.*"} > 90
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS CPU temperature is critical"
+            description: "CPU temperature is {{ printf \"%.1f\" $value }}C. System may throttle or shut down! Metric: {{ $labels.__name__ }}"
+
+    # =====================================================
+    # TrueNAS System Health Alerts
+    # =====================================================
+    - name: truenas.system
+      rules:
+        - alert: TrueNASHighLoad
+          expr: scale_truenas_system_load_load1 > 4
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS load average is high"
+            description: "TrueNAS 1-minute load average is {{ printf \"%.2f\" $value }}. Check running processes."
+
+        - alert: TrueNASHighLoadCritical
+          expr: scale_truenas_system_load_load1 > 8
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS load average is critical"
+            description: "TrueNAS 1-minute load average is {{ printf \"%.2f\" $value }}. System may be unresponsive."
+
+        - alert: TrueNASHighMemoryUsage
+          expr: |
+            (scale_truenas_system_ram_used / (scale_truenas_system_ram_used + scale_truenas_system_ram_free + scale_truenas_system_ram_cached + scale_truenas_system_ram_buffers)) * 100 > 90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS memory usage is high"
+            description: "TrueNAS memory usage is over 90%. Consider adding more RAM or reducing workload."
+
+        - alert: TrueNASHighIOWait
+          expr: |
+            scale_truenas_system_cpu_iowait > 30
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS CPU I/O wait is high"
+            description: "CPU I/O wait is {{ printf \"%.1f\" $value }}%. Disk may be a bottleneck."
+
+        - alert: TrueNASMetricsDown
+          expr: |
+            absent(scale_truenas_system_uptime_uptime)
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS metrics are not being received"
+            description: "No TrueNAS metrics for 10 minutes. Check graphite export configuration on TrueNAS."
+
+    # =====================================================
+    # TrueNAS Exporter Health
+    # =====================================================
+    - name: exporter.health
+      rules:
+        - alert: TrueNASExporterDown
+          expr: up{job="truenas-exporter"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS graphite exporter is down"
+            description: "Unable to scrape metrics from TrueNAS graphite exporter. Check exporter pod."
+
+    # =====================================================
+    # Kubernetes Node Disk Alerts (from node-exporter)
+    # =====================================================
+    - name: node.disk
+      rules:
+        - alert: NodeDiskSpaceWarning
+          expr: |
+            (1 - (node_filesystem_avail_bytes{fstype=~"ext4|xfs|nfs4?"} / node_filesystem_size_bytes{fstype=~"ext4|xfs|nfs4?"})) * 100 > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} is over 80% full"
+            description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} is {{ printf \"%.1f\" $value }}% full."
+
+        - alert: NodeDiskSpaceCritical
+          expr: |
+            (1 - (node_filesystem_avail_bytes{fstype=~"ext4|xfs|nfs4?"} / node_filesystem_size_bytes{fstype=~"ext4|xfs|nfs4?"})) * 100 > 90
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} is over 90% full"
+            description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} is {{ printf \"%.1f\" $value }}% full."
+
+        - alert: NodeDiskSpaceEmergency
+          expr: |
+            (1 - (node_filesystem_avail_bytes{fstype=~"ext4|xfs|nfs4?"} / node_filesystem_size_bytes{fstype=~"ext4|xfs|nfs4?"})) * 100 > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "EMERGENCY: Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} is over 95% full"
+            description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} is {{ printf \"%.1f\" $value }}% full. System may become read-only!"
+
+        - alert: NodeDiskIOSaturation
+          expr: |
+            rate(node_disk_io_time_weighted_seconds_total[5m]) > 0.8
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node {{ $labels.instance }} disk {{ $labels.device }} I/O is saturated"
+            description: "Disk {{ $labels.device }} on {{ $labels.instance }} has high I/O wait ({{ printf \"%.2f\" $value }}s weighted time)."
+
+        - alert: NodeDiskReadLatencyHigh
+          expr: |
+            (rate(node_disk_read_time_seconds_total[5m]) / rate(node_disk_reads_completed_total[5m])) * 1000 > 100
+            and rate(node_disk_reads_completed_total[5m]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node {{ $labels.instance }} disk {{ $labels.device }} read latency is high"
+            description: "Disk {{ $labels.device }} average read latency is {{ printf \"%.0f\" $value }}ms (threshold: 100ms)."
+
+        - alert: NodeDiskWriteLatencyHigh
+          expr: |
+            (rate(node_disk_write_time_seconds_total[5m]) / rate(node_disk_writes_completed_total[5m])) * 1000 > 100
+            and rate(node_disk_writes_completed_total[5m]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node {{ $labels.instance }} disk {{ $labels.device }} write latency is high"
+            description: "Disk {{ $labels.device }} average write latency is {{ printf \"%.0f\" $value }}ms (threshold: 100ms)."
+
+        - alert: NodeFilesystemReadOnly
+          expr: |
+            node_filesystem_readonly{fstype=~"ext4|xfs"} == 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} is read-only"
+            description: "Filesystem {{ $labels.mountpoint }} has become read-only. Check for disk errors."
+
+        - alert: NodeInodeWarning
+          expr: |
+            (1 - (node_filesystem_files_free{fstype=~"ext4|xfs"} / node_filesystem_files{fstype=~"ext4|xfs"})) * 100 > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} inodes over 80%"
+            description: "Inode usage on {{ $labels.mountpoint }} is {{ printf \"%.1f\" $value }}%."
+
+        - alert: NodeInodeCritical
+          expr: |
+            (1 - (node_filesystem_files_free{fstype=~"ext4|xfs"} / node_filesystem_files{fstype=~"ext4|xfs"})) * 100 > 95
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Node {{ $labels.instance }} filesystem {{ $labels.mountpoint }} inodes over 95%"
+            description: "Inode usage on {{ $labels.mountpoint }} is {{ printf \"%.1f\" $value }}%. Cannot create new files!"
+
+    # =====================================================
+    # Kubernetes PVC Alerts
+    # =====================================================
+    - name: kubernetes.pvc
+      rules:
+        - alert: PersistentVolumeClaimWarning
+          expr: |
+            (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is over 80% full"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} is {{ printf \"%.1f\" $value }}% full."
+
+        - alert: PersistentVolumeClaimCritical
+          expr: |
+            (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 90
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is over 90% full"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} is {{ printf \"%.1f\" $value }}% full."
+
+        - alert: PersistentVolumeClaimEmergency
+          expr: |
+            (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "EMERGENCY: PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is over 95% full"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} is {{ printf \"%.1f\" $value }}% full!"
+
+        - alert: PersistentVolumeClaimInodeWarning
+          expr: |
+            (kubelet_volume_stats_inodes_used / kubelet_volume_stats_inodes) * 100 > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} inodes over 80%"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has {{ printf \"%.1f\" $value }}% inodes used."
+
+        - alert: PersistentVolumeClaimInodeCritical
+          expr: |
+            (kubelet_volume_stats_inodes_used / kubelet_volume_stats_inodes) * 100 > 95
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} inodes over 95%"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has {{ printf \"%.1f\" $value }}% inodes used!"
+
+    # =====================================================
+    # NFS Connectivity Alerts
+    # =====================================================
+    - name: nfs.connectivity
+      rules:
+        - alert: NFSMountStale
+          expr: |
+            node_filesystem_readonly{fstype="nfs4"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NFS mount {{ $labels.mountpoint }} is read-only on {{ $labels.instance }}"
+            description: "NFS mount {{ $labels.mountpoint }} has become read-only. Check NFS server connectivity."
+
+        - alert: NFSSlowOperations
+          expr: |
+            rate(node_nfs_rpc_retransmissions_total[5m]) > 0.1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "NFS operations are slow on {{ $labels.instance }}"
+            description: "NFS RPC retransmissions detected ({{ printf \"%.2f\" $value }}/s). Check network or NFS server load."
+
+    # =====================================================
+    # NFS CSI Driver Health
+    # =====================================================
+    - name: nfs.csi
+      rules:
+        - alert: NFSCSIControllerDown
+          expr: |
+            absent(up{job="kubelet", metrics_path="/metrics/cadvisor"} == 1)
+            or count(kube_pod_status_phase{namespace="kube-system", pod=~"csi-nfs-controller.*", phase="Running"}) == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NFS CSI controller is not running"
+            description: "The NFS CSI controller pod is not running. NFS volume provisioning will fail."
+
+        - alert: NFSCSINodeDown
+          expr: |
+            count(kube_pod_status_phase{namespace="kube-system", pod=~"csi-nfs-node.*", phase="Running"}) == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NFS CSI node driver is not running"
+            description: "The NFS CSI node driver is not running. NFS volumes cannot be mounted."
+
+    # =====================================================
+    # PVC Provisioning Alerts
+    # =====================================================
+    - name: kubernetes.pvc.provisioning
+      rules:
+        - alert: PVCPendingLong
+          expr: |
+            kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} stuck in Pending"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has been Pending for over 15 minutes. Check storage provisioner logs."
+
+        - alert: PVCPendingCritical
+          expr: |
+            kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} stuck in Pending for 1h+"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has been Pending for over 1 hour. Storage provisioning is likely broken."
+
+        - alert: PVCLost
+          expr: |
+            kube_persistentvolumeclaim_status_phase{phase="Lost"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is Lost"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has lost its bound PV. Data may be at risk!"
+
+    # =====================================================
+    # TrueNAS Pool Capacity Alerts
+    # =====================================================
+    - name: truenas.capacity
+      rules:
+        - alert: TrueNASPoolSpaceWarning
+          expr: |
+            {__name__=~"scale_truenas_zfspool_space_.*_capacity"} > 75
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS ZFS pool capacity over 75%"
+            description: "ZFS pool capacity is {{ printf \"%.1f\" $value }}%. Consider freeing space. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASPoolSpaceCritical
+          expr: |
+            {__name__=~"scale_truenas_zfspool_space_.*_capacity"} > 85
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "TrueNAS ZFS pool capacity over 85%"
+            description: "ZFS pool capacity is {{ printf \"%.1f\" $value }}%. ZFS performance degrades significantly above 80%. Metric: {{ $labels.__name__ }}"
+
+        - alert: TrueNASPoolSpaceEmergency
+          expr: |
+            {__name__=~"scale_truenas_zfspool_space_.*_capacity"} > 90
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "EMERGENCY: TrueNAS ZFS pool capacity over 90%"
+            description: "ZFS pool capacity is {{ printf \"%.1f\" $value }}%. Immediate action required! Metric: {{ $labels.__name__ }}"
