@@ -39,6 +39,7 @@ export POSTGRES_DAGSTER_PASSWORD="$(generate_password)"
 export POSTGRES_LITELLM_PASSWORD="$(generate_password)"
 export POSTGRES_IMMICH_PASSWORD="$(generate_password)"
 export POSTGRES_FRIGATE_PASSWORD="$(generate_password)"
+export POSTGRES_MEMORY_PASSWORD="$(generate_password)"
 
 # ============================================
 # Redis
@@ -62,6 +63,11 @@ export LITELLM_SALT_KEY="sk-salt-$(generate_password)"
 # n8n Configuration
 # ============================================
 export N8N_ENCRYPTION_KEY="$(generate_hex_key)"
+
+# ============================================
+# Qdrant Configuration
+# ============================================
+export QDRANT_API_KEY="$(generate_password)"
 
 # ============================================
 # SeaweedFS S3 Configuration

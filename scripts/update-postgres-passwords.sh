@@ -65,6 +65,7 @@ declare -A USERS=(
     ["litellm"]="${POSTGRES_LITELLM_PASSWORD}"
     ["immich"]="${POSTGRES_IMMICH_PASSWORD}"
     ["frigate"]="${POSTGRES_FRIGATE_PASSWORD}"
+    ["memory"]="${POSTGRES_MEMORY_PASSWORD}"
 )
 
 # Additional databases for Harbor (if needed)

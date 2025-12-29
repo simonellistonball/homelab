@@ -26,6 +26,7 @@ check_passwords() {
         "POSTGRES_LITELLM_PASSWORD"
         "POSTGRES_IMMICH_PASSWORD"
         "POSTGRES_FRIGATE_PASSWORD"
+        "POSTGRES_MEMORY_PASSWORD"
     )
 
     for var in "${passwords[@]}"; do
@@ -59,7 +60,8 @@ cat "$TEMPLATE_FILE" | \
     sed "s/__POSTGRES_DAGSTER_PASSWORD__/$(escape_for_sed "$POSTGRES_DAGSTER_PASSWORD")/g" | \
     sed "s/__POSTGRES_LITELLM_PASSWORD__/$(escape_for_sed "$POSTGRES_LITELLM_PASSWORD")/g" | \
     sed "s/__POSTGRES_IMMICH_PASSWORD__/$(escape_for_sed "$POSTGRES_IMMICH_PASSWORD")/g" | \
-    sed "s/__POSTGRES_FRIGATE_PASSWORD__/$(escape_for_sed "$POSTGRES_FRIGATE_PASSWORD")/g" \
+    sed "s/__POSTGRES_FRIGATE_PASSWORD__/$(escape_for_sed "$POSTGRES_FRIGATE_PASSWORD")/g" | \
+    sed "s/__POSTGRES_MEMORY_PASSWORD__/$(escape_for_sed "$POSTGRES_MEMORY_PASSWORD")/g" \
     > "$OUTPUT_FILE"
 
 echo ""

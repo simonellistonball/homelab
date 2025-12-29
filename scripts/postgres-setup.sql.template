@@ -87,6 +87,17 @@ BEGIN
 END
 $$;
 
+-- memory
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'memory') THEN
+        CREATE ROLE memory WITH LOGIN PASSWORD '__POSTGRES_MEMORY_PASSWORD__';
+    ELSE
+        ALTER USER memory WITH PASSWORD '__POSTGRES_MEMORY_PASSWORD__';
+    END IF;
+END
+$$;
+
 -- ============================================
 -- Create Databases
 -- ============================================
@@ -99,6 +110,7 @@ SELECT 'CREATE DATABASE dagster OWNER dagster' WHERE NOT EXISTS (SELECT FROM pg_
 SELECT 'CREATE DATABASE litellm OWNER litellm' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'litellm')\gexec
 SELECT 'CREATE DATABASE immich OWNER immich' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'immich')\gexec
 SELECT 'CREATE DATABASE frigate OWNER frigate' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frigate')\gexec
+SELECT 'CREATE DATABASE memory OWNER memory' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'memory')\gexec
 
 -- ============================================
 -- Grant Privileges
@@ -111,13 +123,14 @@ GRANT ALL PRIVILEGES ON DATABASE dagster TO dagster;
 GRANT ALL PRIVILEGES ON DATABASE litellm TO litellm;
 GRANT ALL PRIVILEGES ON DATABASE immich TO immich;
 GRANT ALL PRIVILEGES ON DATABASE frigate TO frigate;
+GRANT ALL PRIVILEGES ON DATABASE memory TO memory;
 
 -- ============================================
 -- Verify
 -- ============================================
 
 \echo 'Users created:'
-SELECT rolname FROM pg_roles WHERE rolname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate');
+SELECT rolname FROM pg_roles WHERE rolname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory');
 
 \echo 'Databases created:'
-SELECT datname, pg_catalog.pg_get_userbyid(datdba) as owner FROM pg_database WHERE datname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate');
+SELECT datname, pg_catalog.pg_get_userbyid(datdba) as owner FROM pg_database WHERE datname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory');
