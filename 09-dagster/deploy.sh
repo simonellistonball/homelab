@@ -27,9 +27,12 @@ cat values.yaml | \
   > /tmp/dagster-values.yaml
 
 # Install Dagster
+# Note: --skip-schema-validation is needed because the chart's values.schema.json
+# references kubernetesjsonschema.dev which has been deprecated and returns 404
 helm upgrade --install dagster dagster/dagster \
   --namespace dagster \
   -f /tmp/dagster-values.yaml \
+  --skip-schema-validation \
   --wait --timeout 10m
 
 rm /tmp/dagster-values.yaml
