@@ -29,6 +29,7 @@ kubectl apply -f litellm/configmap.yaml
 kubectl apply -f litellm/deployment.yaml
 kubectl apply -f litellm/service.yaml
 kubectl apply -f litellm/ingressroute.yaml
+kubectl apply -f litellm/servicemonitor.yaml
 
 # Deploy Whisper
 echo "Deploying Whisper..."

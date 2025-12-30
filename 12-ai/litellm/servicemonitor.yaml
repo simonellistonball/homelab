@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: litellm
+  namespace: ai
+  labels:
+    app: litellm
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: litellm
+  namespaceSelector:
+    matchNames:
+      - ai
+  endpoints:
+    - port: http
+      path: /metrics/
+      interval: 30s
+      scrapeTimeout: 10s

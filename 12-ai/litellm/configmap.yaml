@@ -6,35 +6,75 @@ metadata:
 data:
   config.yaml: |
     # LiteLLM Proxy Configuration
-    # Add your LLM providers here
 
     model_list:
-      # Example: OpenAI
-      # - model_name: gpt-4
-      #   litellm_params:
-      #     model: openai/gpt-4
-      #     api_key: os.environ/OPENAI_API_KEY
-
-      # Example: Anthropic
-      # - model_name: claude-3-opus
-      #   litellm_params:
-      #     model: anthropic/claude-3-opus-20240229
-      #     api_key: os.environ/ANTHROPIC_API_KEY
-
-      # Example: Local Ollama
-      # - model_name: llama2
-      #   litellm_params:
-      #     model: ollama/llama2
-      #     api_base: http://ollama.ai.svc.cluster.local:11434
-
-      # Placeholder - configure your models
-      - model_name: echo
+      # Wildcard passthrough - any model name routes to Ollama
+      # Clients can use "llama3.2", "codellama", etc. without prefix
+      - model_name: "*"
         litellm_params:
-          model: fake-openai-endpoint
+          model: "ollama/*"
+          api_base: http://mac.house.simonellistonball.com:11434
+          timeout: 30
+        model_info:
+          id: "ollama-mac"
+          description: "Ollama models on Mac"
+
+      - model_name: "*"
+        litellm_params:
+          model: "ollama/*"
+          api_base: http://desktop.house.simonellistonball.com:11434
+          timeout: 30
+        model_info:
+          id: "ollama-desktop"
+          description: "Ollama models on Desktop"
+
+      # Also keep explicit ollama/* prefix for clarity
+      - model_name: "ollama/*"
+        litellm_params:
+          model: "ollama/*"
+          api_base: http://mac.house.simonellistonball.com:11434
+          timeout: 30
+        model_info:
+          id: "ollama-mac-explicit"
+
+      - model_name: "ollama/*"
+        litellm_params:
+          model: "ollama/*"
+          api_base: http://desktop.house.simonellistonball.com:11434
+          timeout: 30
+        model_info:
+          id: "ollama-desktop-explicit"
+
+    router_settings:
+      # Health check settings - check every 60 seconds
+      enable_pre_call_checks: true
+      # Retry failed requests on other deployments
+      num_retries: 2
+      # Timeout for each request attempt
+      timeout: 60
+      # Allowed fails before removing from pool
+      allowed_fails: 2
+      # Cooldown period before retrying failed endpoint (seconds)
+      cooldown_time: 120
+      # Routing strategy - simple shuffle between available endpoints
+      routing_strategy: "simple-shuffle"
 
     litellm_settings:
       drop_params: true
-      set_verbose: false
+      set_verbose: true
+      # Enable health checks
+      health_check_interval: 60
+      # Request timeout
+      request_timeout: 120
+      # Enable Prometheus metrics
+      success_callback: ["prometheus"]
+      failure_callback: ["prometheus"]
+      service_callback: ["prometheus"]
 
     general_settings:
       master_key: os.environ/LITELLM_MASTER_KEY
+      # Enable the /models endpoint to show available models
+      enable_oauth2_auth: false
+      # Log all prompts and responses to database
+      store_model_in_db: true
+      store_prompts_in_spend_logs: true
