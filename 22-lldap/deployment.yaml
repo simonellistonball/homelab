@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lldap
+  namespace: auth
+  labels:
+    app: lldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lldap
+  template:
+    metadata:
+      labels:
+        app: lldap
+    spec:
+      containers:
+        - name: lldap
+          image: lldap/lldap:stable
+          ports:
+            - name: ldap
+              containerPort: 3890
+              protocol: TCP
+            - name: ldaps
+              containerPort: 6360
+              protocol: TCP
+            - name: web
+              containerPort: 17170
+              protocol: TCP
+          env:
+            - name: TZ
+              value: "Europe/London"
+            - name: LLDAP_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: jwt-secret
+            - name: LLDAP_KEY_SEED
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: key-seed
+            - name: LLDAP_LDAP_BASE_DN
+              value: "dc=house,dc=simonellistonball,dc=com"
+            - name: LLDAP_LDAP_USER_DN
+              value: "admin"
+            - name: LLDAP_LDAP_USER_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: admin-password
+            # Database - using SQLite for simplicity (data in PVC)
+            - name: LLDAP_DATABASE_URL
+              value: "sqlite:///data/users.db?mode=rwc"
+            # LDAPS TLS configuration
+            - name: LLDAP_LDAPS_OPTIONS__ENABLED
+              value: "true"
+            - name: LLDAP_LDAPS_OPTIONS__PORT
+              value: "6360"
+            - name: LLDAP_LDAPS_OPTIONS__CERT_FILE
+              value: "/tls/tls.crt"
+            - name: LLDAP_LDAPS_OPTIONS__KEY_FILE
+              value: "/tls/tls.key"
+            # SMTP for password resets (optional)
+            # - name: LLDAP_SMTP_OPTIONS__ENABLE_PASSWORD_RESET
+            #   value: "true"
+            # - name: LLDAP_SMTP_OPTIONS__SERVER
+            #   value: "smtp.example.com"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 17170
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 17170
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: lldap-data
+        - name: tls
+          secret:
+            secretName: lldap-ldaps-tls
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lldap-data
+  namespace: auth
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 100Mi

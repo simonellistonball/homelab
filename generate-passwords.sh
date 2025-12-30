@@ -80,6 +80,13 @@ export SEAWEEDFS_READONLY_ACCESS_KEY="$(generate_s3_access_key)"
 export SEAWEEDFS_READONLY_SECRET_KEY="$(generate_s3_secret_key)"
 
 # ============================================
+# LLDAP (Lightweight LDAP for Unix users)
+# ============================================
+export LLDAP_ADMIN_PASSWORD="$(generate_password)"
+export LLDAP_JWT_SECRET="$(generate_hex_key)"
+export LLDAP_KEY_SEED="$(generate_hex_key)"
+
+# ============================================
 # Authentik (Identity Provider / SSO)
 # ============================================
 export AUTHENTIK_SECRET_KEY="$(generate_hex_key)"

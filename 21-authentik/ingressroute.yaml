@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authentik
+  namespace: auth
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`auth.apps.house.simonellistonball.com`)
+      services:
+        - name: authentik-server
+          port: 80
+      # No middleware here - Authentik itself handles auth
+  tls:
+    secretName: authentik-tls

@@ -1,0 +1,67 @@
+# Authentik Helm Values
+# Chart: goauthentik/authentik
+# Docs: https://docs.goauthentik.io/docs/install-config/install/kubernetes
+
+authentik:
+  secret_key: "${AUTHENTIK_SECRET_KEY}"
+  error_reporting:
+    enabled: false
+
+  postgresql:
+    host: "${POSTGRES_HOST}"
+    port: ${POSTGRES_PORT}
+    name: "authentik"
+    user: "authentik"
+    password: "${POSTGRES_AUTHENTIK_PASSWORD}"
+
+  redis:
+    host: "redis-master.redis.svc.cluster.local"
+    password: "${REDIS_PASSWORD}"
+
+server:
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+  ingress:
+    enabled: false  # We use Traefik IngressRoute
+
+worker:
+  replicas: 1
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+# Disable embedded PostgreSQL - we use external
+postgresql:
+  enabled: false
+
+# Disable embedded Redis - we use existing Redis
+redis:
+  enabled: false
+
+# Prometheus metrics
+prometheus:
+  serviceMonitor:
+    create: true
+    labels:
+      release: kube-prometheus-stack
+
+# Email configuration (optional - configure for password resets)
+# authentik:
+#   email:
+#     host: "smtp.example.com"
+#     port: 587
+#     username: ""
+#     password: ""
+#     use_tls: true
+#     from: "authentik@example.com"

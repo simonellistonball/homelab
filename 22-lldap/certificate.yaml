@@ -1,0 +1,43 @@
+# Certificate for web UI (private CA)
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lldap-web-cert
+  namespace: auth
+spec:
+  secretName: lldap-web-tls
+  commonName: ldap.apps.house.simonellistonball.com
+  dnsNames:
+    - ldap.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab
+---
+# Certificate for LDAPS (internal, private CA)
+# Used for secure LDAP connections from Authentik, TrueNAS, etc.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lldap-ldaps-cert
+  namespace: auth
+spec:
+  secretName: lldap-ldaps-tls
+  commonName: lldap.auth.svc.cluster.local
+  dnsNames:
+    - lldap.auth.svc.cluster.local
+    - lldap.auth.svc
+    - lldap
+    - ldap.apps.house.simonellistonball.com
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+      - Simon Elliston Ball
+    organizationalUnits:
+      - homelab

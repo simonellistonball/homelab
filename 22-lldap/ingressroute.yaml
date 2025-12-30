@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lldap
+  namespace: auth
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`ldap.apps.house.simonellistonball.com`)
+      services:
+        - name: lldap
+          port: 80
+  tls:
+    secretName: lldap-web-tls
