@@ -31,6 +31,15 @@ kubectl create secret generic serendipity-postgres-secret \
   --from-literal=POSTGRES_DB="serendipity" \
   --dry-run=client -o yaml | kubectl apply -f -
 
+# Create serendipity storage config
+echo "Creating serendipity storage configmap..."
+kubectl create configmap serendipity-storage-config \
+  --namespace dagster \
+  --from-literal=NFS_SERVER="truenas.house.simonellistonball.com" \
+  --from-literal=NFS_PATH="/mnt/data/data" \
+  --from-literal=OPENALEX_DATA_DIR="/mnt/data/data/openalex" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
 # Substitute passwords and config in values.yaml
 cat values.yaml | \
   sed "s/POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER/${POSTGRES_DAGSTER_PASSWORD}/g" | \

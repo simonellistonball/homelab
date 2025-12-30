@@ -150,6 +150,8 @@ dagster-user-deployments:
       port: 4000
       includeConfigInLaunchedRuns:
         enabled: true
+      envConfigMaps:
+        - name: serendipity-storage-config
       envSecrets:
         - name: serendipity-postgres-secret
       resources:
