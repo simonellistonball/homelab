@@ -98,6 +98,39 @@ BEGIN
 END
 $$;
 
+-- osm
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'osm') THEN
+        CREATE ROLE osm WITH LOGIN PASSWORD '__POSTGRES_OSM_PASSWORD__';
+    ELSE
+        ALTER USER osm WITH PASSWORD '__POSTGRES_OSM_PASSWORD__';
+    END IF;
+END
+$$;
+
+-- serendipity
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'serendipity') THEN
+        CREATE ROLE serendipity WITH LOGIN PASSWORD '__POSTGRES_SERENDIPITY_PASSWORD__';
+    ELSE
+        ALTER USER serendipity WITH PASSWORD '__POSTGRES_SERENDIPITY_PASSWORD__';
+    END IF;
+END
+$$;
+
+-- authentik
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authentik') THEN
+        CREATE ROLE authentik WITH LOGIN PASSWORD '__POSTGRES_AUTHENTIK_PASSWORD__';
+    ELSE
+        ALTER USER authentik WITH PASSWORD '__POSTGRES_AUTHENTIK_PASSWORD__';
+    END IF;
+END
+$$;
+
 -- ============================================
 -- Create Databases
 -- ============================================
@@ -111,6 +144,9 @@ SELECT 'CREATE DATABASE litellm OWNER litellm' WHERE NOT EXISTS (SELECT FROM pg_
 SELECT 'CREATE DATABASE immich OWNER immich' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'immich')\gexec
 SELECT 'CREATE DATABASE frigate OWNER frigate' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frigate')\gexec
 SELECT 'CREATE DATABASE memory OWNER memory' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'memory')\gexec
+SELECT 'CREATE DATABASE osm OWNER osm' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'osm')\gexec
+SELECT 'CREATE DATABASE serendipity OWNER serendipity' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'serendipity')\gexec
+SELECT 'CREATE DATABASE authentik OWNER authentik' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'authentik')\gexec
 
 -- ============================================
 -- Grant Privileges
@@ -124,13 +160,16 @@ GRANT ALL PRIVILEGES ON DATABASE litellm TO litellm;
 GRANT ALL PRIVILEGES ON DATABASE immich TO immich;
 GRANT ALL PRIVILEGES ON DATABASE frigate TO frigate;
 GRANT ALL PRIVILEGES ON DATABASE memory TO memory;
+GRANT ALL PRIVILEGES ON DATABASE osm TO osm;
+GRANT ALL PRIVILEGES ON DATABASE serendipity TO serendipity;
+GRANT ALL PRIVILEGES ON DATABASE authentik TO authentik;
 
 -- ============================================
 -- Verify
 -- ============================================
 
 \echo 'Users created:'
-SELECT rolname FROM pg_roles WHERE rolname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory');
+SELECT rolname FROM pg_roles WHERE rolname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory', 'osm', 'serendipity', 'authentik');
 
 \echo 'Databases created:'
-SELECT datname, pg_catalog.pg_get_userbyid(datdba) as owner FROM pg_database WHERE datname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory');
+SELECT datname, pg_catalog.pg_get_userbyid(datdba) as owner FROM pg_database WHERE datname IN ('n8n', 'gitea', 'harbor', 'dagster', 'litellm', 'immich', 'frigate', 'memory', 'osm', 'serendipity', 'authentik');

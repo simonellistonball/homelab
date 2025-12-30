@@ -40,6 +40,8 @@ export POSTGRES_LITELLM_PASSWORD="$(generate_password)"
 export POSTGRES_IMMICH_PASSWORD="$(generate_password)"
 export POSTGRES_FRIGATE_PASSWORD="$(generate_password)"
 export POSTGRES_MEMORY_PASSWORD="$(generate_password)"
+export POSTGRES_OSM_PASSWORD="$(generate_password)"
+export POSTGRES_SERENDIPITY_PASSWORD="$(generate_password)"
 
 # ============================================
 # Redis
@@ -76,6 +78,12 @@ export SEAWEEDFS_ACCESS_KEY="$(generate_s3_access_key)"
 export SEAWEEDFS_SECRET_KEY="$(generate_s3_secret_key)"
 export SEAWEEDFS_READONLY_ACCESS_KEY="$(generate_s3_access_key)"
 export SEAWEEDFS_READONLY_SECRET_KEY="$(generate_s3_secret_key)"
+
+# ============================================
+# Authentik (Identity Provider / SSO)
+# ============================================
+export AUTHENTIK_SECRET_KEY="$(generate_hex_key)"
+export POSTGRES_AUTHENTIK_PASSWORD="$(generate_password)"
 
 EOF
 

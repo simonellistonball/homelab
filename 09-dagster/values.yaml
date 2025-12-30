@@ -56,7 +56,7 @@ dagsterDaemon:
 ingress:
   enabled: false
 
-# User code deployments (example - customize as needed)
+# User code deployments
 dagster-user-deployments:
   enabled: true
   enableSubchart: true
@@ -66,8 +66,6 @@ dagster-user-deployments:
         repository: harbor.apps.house.simonellistonball.com/dagster/osm-pipeline
         tag: latest
         pullPolicy: Always
-      imagePullSecrets:
-        - name: harbor-pull
       dagsterApiGrpcArgs:
         - "-m"
         - "osm_pipeline.definitions"
@@ -79,21 +77,105 @@ dagster-user-deployments:
       envSecrets:
         - name: osm-pipeline-postgres-secret
       resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
         requests:
           cpu: 100m
           memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      # Use the existing harbor-pull secret for pulling images
+      imagePullSecrets:
+        - name: harbor-pull
+      # Volume mounts for run pods (inherited via includeConfigInLaunchedRuns)
+      volumes:
+        - name: osm-downloads
+          persistentVolumeClaim:
+            claimName: osm-downloads-pvc
+        - name: osm-temp
+          persistentVolumeClaim:
+            claimName: osm-temp-pvc
+        - name: osm-scratch
+          persistentVolumeClaim:
+            claimName: osm-scratch-pvc
+        - name: osm-output
+          persistentVolumeClaim:
+            claimName: osm-output-pvc
+        - name: ca-bundle
+          configMap:
+            name: simonellistonball-ca-bundle
+        # Direct NFS mounts for shared data access
+        - name: nfs-data
+          nfs:
+            server: TRUENAS_IP_PLACEHOLDER
+            path: /mnt/data/data
+        - name: nfs-archives
+          nfs:
+            server: TRUENAS_IP_PLACEHOLDER
+            path: /mnt/data/archive
+      volumeMounts:
+        - name: osm-downloads
+          mountPath: /data/downloads
+        - name: osm-temp
+          mountPath: /data/tmp
+        - name: osm-scratch
+          mountPath: /data/scratch
+        - name: osm-output
+          mountPath: /data/output
+        - name: ca-bundle
+          mountPath: /etc/ssl/certs/ca-certificates.crt
+          subPath: ca-certificates.crt
+          readOnly: true
+        # Shared NFS data mounts
+        - name: nfs-data
+          mountPath: /mnt/data/data
+        - name: nfs-archives
+          mountPath: /mnt/data/archive
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      env:
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/ca-certificates.crt
+        - name: REQUESTS_CA_BUNDLE
+          value: /etc/ssl/certs/ca-certificates.crt
+    - name: serendipity
+      image:
+        repository: harbor.apps.house.simonellistonball.com/dagster/serendipity
+        tag: latest
+        pullPolicy: Always
+      dagsterApiGrpcArgs:
+        - "-m"
+        - "dagster_pipelines"
+      port: 4000
+      includeConfigInLaunchedRuns:
+        enabled: true
+      envSecrets:
+        - name: serendipity-postgres-secret
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      imagePullSecrets:
+        - name: harbor-pull
       volumes:
         - name: ca-bundle
           configMap:
             name: simonellistonball-ca-bundle
+        - name: nfs-data
+          nfs:
+            server: TRUENAS_IP_PLACEHOLDER
+            path: /mnt/data/data
       volumeMounts:
         - name: ca-bundle
           mountPath: /etc/ssl/certs/ca-certificates.crt
           subPath: ca-certificates.crt
           readOnly: true
+        - name: nfs-data
+          mountPath: /mnt/data/data
       dnsConfig:
         options:
           - name: ndots

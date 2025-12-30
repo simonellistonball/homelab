@@ -20,10 +20,22 @@ kubectl apply -f certificate.yaml
 echo "Waiting for certificate to be ready..."
 kubectl wait --for=condition=Ready certificate/dagster-cert -n dagster --timeout=120s
 
-# Substitute passwords in values.yaml
+# Create serendipity postgres secret
+echo "Creating serendipity postgres secret..."
+kubectl create secret generic serendipity-postgres-secret \
+  --namespace dagster \
+  --from-literal=POSTGRES_HOST="${POSTGRES_HOST}" \
+  --from-literal=POSTGRES_PORT="${POSTGRES_PORT}" \
+  --from-literal=POSTGRES_USER="serendipity" \
+  --from-literal=POSTGRES_PASSWORD="${POSTGRES_SERENDIPITY_PASSWORD}" \
+  --from-literal=POSTGRES_DB="serendipity" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Substitute passwords and config in values.yaml
 cat values.yaml | \
   sed "s/POSTGRES_DAGSTER_PASSWORD_PLACEHOLDER/${POSTGRES_DAGSTER_PASSWORD}/g" | \
-  sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" \
+  sed "s/POSTGRES_HOST_PLACEHOLDER/${POSTGRES_HOST}/g" | \
+  sed "s/TRUENAS_IP_PLACEHOLDER/${TRUENAS_IP}/g" \
   > /tmp/dagster-values.yaml
 
 # Install Dagster
