@@ -15,19 +15,23 @@ helm repo update
 
 # Create PostgreSQL database if it doesn't exist
 echo "Ensuring PostgreSQL database exists..."
-PGPASSWORD="${POSTGRES_AUTHENTIK_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -tc \
+PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -tc \
   "SELECT 1 FROM pg_database WHERE datname = 'authentik'" | grep -q 1 || \
-PGPASSWORD="${POSTGRES_AUTHENTIK_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
+PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
   "CREATE DATABASE authentik;"
 
 # Create PostgreSQL user if it doesn't exist
-PGPASSWORD="${POSTGRES_AUTHENTIK_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -tc \
+PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -tc \
   "SELECT 1 FROM pg_roles WHERE rolname = 'authentik'" | grep -q 1 || \
-PGPASSWORD="${POSTGRES_AUTHENTIK_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
+PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
   "CREATE USER authentik WITH PASSWORD '${POSTGRES_AUTHENTIK_PASSWORD}';"
 
-PGPASSWORD="${POSTGRES_AUTHENTIK_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
+PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "${POSTGRES_HOST}" -U postgres -c \
   "GRANT ALL PRIVILEGES ON DATABASE authentik TO authentik;"
+
+# Apply blueprint configmap (with LLDAP password substitution)
+echo "Applying Authentik blueprints..."
+envsubst < "${SCRIPT_DIR}/blueprint-configmap.yaml" | kubectl apply -f -
 
 # Substitute environment variables in values.yaml
 envsubst < "${SCRIPT_DIR}/values.yaml" > /tmp/authentik-values.yaml
@@ -71,10 +75,8 @@ echo "  - Go to Applications > Outposts"
 echo "  - Create 'traefik' outpost with type 'Proxy'"
 echo ""
 echo "LLDAP Integration (LDAPS/TLS):"
-echo "  If LLDAP is deployed, configure LDAP source in Authentik:"
-echo "  - Directory > Federation > Create > LDAP Source"
-echo "  - Server URI: ldaps://lldap.auth.svc.cluster.local:636"
-echo "  - Base DN: dc=house,dc=simonellistonball,dc=com"
-echo "  - TLS secured with Simon Elliston Ball Root CA"
-echo "  - See 22-lldap/INTEGRATIONS.md for details"
+echo "  LLDAP source is auto-configured via blueprint."
+echo "  If LLDAP is deployed, go to Directory > Federation to trigger sync."
+echo "  Connection: ldaps://lldap.auth.svc.cluster.local:636"
+echo "  See 22-lldap/INTEGRATIONS.md for details"
 echo ""

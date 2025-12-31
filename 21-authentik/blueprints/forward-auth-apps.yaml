@@ -1,0 +1,250 @@
+# Authentik Blueprint: Forward Auth Applications
+# Proxy providers for apps that don't support native OIDC
+version: 1
+metadata:
+  name: Forward Auth Applications
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+entries:
+  # ============================================
+  # Traefik Dashboard - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: traefik-provider
+    state: present
+    identifiers:
+      name: traefik
+    attrs:
+      name: traefik
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://traefik.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: traefik-app
+    state: present
+    identifiers:
+      slug: traefik
+    attrs:
+      name: Traefik Dashboard
+      slug: traefik
+      provider: !KeyOf traefik-provider
+      meta_launch_url: https://traefik.apps.house.simonellistonball.com/dashboard/
+      policy_engine_mode: any
+
+  # ============================================
+  # Prometheus - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: prometheus-provider
+    state: present
+    identifiers:
+      name: prometheus
+    attrs:
+      name: prometheus
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://prometheus.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: prometheus-app
+    state: present
+    identifiers:
+      slug: prometheus
+    attrs:
+      name: Prometheus
+      slug: prometheus
+      provider: !KeyOf prometheus-provider
+      meta_launch_url: https://prometheus.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Alertmanager - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: alertmanager-provider
+    state: present
+    identifiers:
+      name: alertmanager
+    attrs:
+      name: alertmanager
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://alertmanager.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: alertmanager-app
+    state: present
+    identifiers:
+      slug: alertmanager
+    attrs:
+      name: Alertmanager
+      slug: alertmanager
+      provider: !KeyOf alertmanager-provider
+      meta_launch_url: https://alertmanager.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Dagster - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: dagster-provider
+    state: present
+    identifiers:
+      name: dagster
+    attrs:
+      name: dagster
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://dagster.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: dagster-app
+    state: present
+    identifiers:
+      slug: dagster
+    attrs:
+      name: Dagster
+      slug: dagster
+      provider: !KeyOf dagster-provider
+      meta_launch_url: https://dagster.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Redpanda Console - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: redpanda-provider
+    state: present
+    identifiers:
+      name: redpanda
+    attrs:
+      name: redpanda
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://redpanda.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: redpanda-app
+    state: present
+    identifiers:
+      slug: redpanda
+    attrs:
+      name: Redpanda Console
+      slug: redpanda
+      provider: !KeyOf redpanda-provider
+      meta_launch_url: https://redpanda.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # n8n - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: n8n-provider
+    state: present
+    identifiers:
+      name: n8n
+    attrs:
+      name: n8n
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://n8n.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: n8n-app
+    state: present
+    identifiers:
+      slug: n8n
+    attrs:
+      name: n8n
+      slug: n8n
+      provider: !KeyOf n8n-provider
+      meta_launch_url: https://n8n.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # SeaweedFS Filer - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: seaweedfs-provider
+    state: present
+    identifiers:
+      name: seaweedfs
+    attrs:
+      name: seaweedfs
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://seaweedfs.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: seaweedfs-app
+    state: present
+    identifiers:
+      slug: seaweedfs
+    attrs:
+      name: SeaweedFS Filer
+      slug: seaweedfs
+      provider: !KeyOf seaweedfs-provider
+      meta_launch_url: https://seaweedfs.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # CouchDB - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: couchdb-provider
+    state: present
+    identifiers:
+      name: couchdb
+    attrs:
+      name: couchdb
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://couchdb.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: couchdb-app
+    state: present
+    identifiers:
+      slug: couchdb
+    attrs:
+      name: CouchDB
+      slug: couchdb
+      provider: !KeyOf couchdb-provider
+      meta_launch_url: https://couchdb.apps.house.simonellistonball.com/_utils/
+      policy_engine_mode: any
+
+  # ============================================
+  # Qdrant - Forward Auth
+  # ============================================
+  - model: authentik_providers_proxy.proxyprovider
+    id: qdrant-provider
+    state: present
+    identifiers:
+      name: qdrant
+    attrs:
+      name: qdrant
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+      mode: forward_single
+      external_host: https://qdrant.apps.house.simonellistonball.com
+
+  - model: authentik_core.application
+    id: qdrant-app
+    state: present
+    identifiers:
+      slug: qdrant
+    attrs:
+      name: Qdrant
+      slug: qdrant
+      provider: !KeyOf qdrant-provider
+      meta_launch_url: https://qdrant.apps.house.simonellistonball.com/dashboard
+      policy_engine_mode: any

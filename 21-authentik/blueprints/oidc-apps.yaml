@@ -1,0 +1,147 @@
+# Authentik Blueprint: OIDC Applications
+# Native OAuth2/OIDC integrations for apps that support it
+version: 1
+metadata:
+  name: OIDC Applications
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+context:
+  domain: apps.house.simonellistonball.com
+entries:
+  # ============================================
+  # Grafana - OAuth2/OIDC
+  # ============================================
+  - model: authentik_providers_oauth2.oauth2provider
+    id: grafana-provider
+    state: present
+    identifiers:
+      name: grafana
+    attrs:
+      name: grafana
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: grafana
+      client_secret: "${AUTHENTIK_GRAFANA_CLIENT_SECRET}"
+      redirect_uris: |
+        https://grafana.apps.house.simonellistonball.com/login/generic_oauth
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+
+  - model: authentik_core.application
+    id: grafana-app
+    state: present
+    identifiers:
+      slug: grafana
+    attrs:
+      name: Grafana
+      slug: grafana
+      provider: !KeyOf grafana-provider
+      meta_launch_url: https://grafana.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Gitea - OAuth2/OIDC
+  # ============================================
+  - model: authentik_providers_oauth2.oauth2provider
+    id: gitea-provider
+    state: present
+    identifiers:
+      name: gitea
+    attrs:
+      name: gitea
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: gitea
+      client_secret: "${AUTHENTIK_GITEA_CLIENT_SECRET}"
+      redirect_uris: |
+        https://gitea.apps.house.simonellistonball.com/user/oauth2/authentik/callback
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+
+  - model: authentik_core.application
+    id: gitea-app
+    state: present
+    identifiers:
+      slug: gitea
+    attrs:
+      name: Gitea
+      slug: gitea
+      provider: !KeyOf gitea-provider
+      meta_launch_url: https://gitea.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Harbor - OAuth2/OIDC
+  # ============================================
+  - model: authentik_providers_oauth2.oauth2provider
+    id: harbor-provider
+    state: present
+    identifiers:
+      name: harbor
+    attrs:
+      name: harbor
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: harbor
+      client_secret: "${AUTHENTIK_HARBOR_CLIENT_SECRET}"
+      redirect_uris: |
+        https://harbor.apps.house.simonellistonball.com/c/oidc/callback
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+
+  - model: authentik_core.application
+    id: harbor-app
+    state: present
+    identifiers:
+      slug: harbor
+    attrs:
+      name: Harbor
+      slug: harbor
+      provider: !KeyOf harbor-provider
+      meta_launch_url: https://harbor.apps.house.simonellistonball.com
+      policy_engine_mode: any
+
+  # ============================================
+  # Immich - OAuth2/OIDC
+  # ============================================
+  - model: authentik_providers_oauth2.oauth2provider
+    id: immich-provider
+    state: present
+    identifiers:
+      name: immich
+    attrs:
+      name: immich
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: immich
+      client_secret: "${AUTHENTIK_IMMICH_CLIENT_SECRET}"
+      redirect_uris: |
+        https://immich.apps.house.simonellistonball.com/auth/login
+        https://immich.apps.house.simonellistonball.com/user-settings
+        app.immich:/
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+
+  - model: authentik_core.application
+    id: immich-app
+    state: present
+    identifiers:
+      slug: immich
+    attrs:
+      name: Immich
+      slug: immich
+      provider: !KeyOf immich-provider
+      meta_launch_url: https://immich.apps.house.simonellistonball.com
+      policy_engine_mode: any

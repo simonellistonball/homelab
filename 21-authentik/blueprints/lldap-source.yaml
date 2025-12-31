@@ -1,0 +1,58 @@
+# Authentik Blueprint: LLDAP Source Configuration
+# This blueprint configures Authentik to sync users from LLDAP
+version: 1
+metadata:
+  name: LLDAP Source
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+entries:
+  # LDAP Property Mappings are built-in, we just need the source
+
+  # LDAP Source for LLDAP
+  - model: authentik_sources_ldap.ldapsource
+    id: lldap-source
+    state: present
+    identifiers:
+      slug: lldap
+    attrs:
+      name: LLDAP
+      slug: lldap
+      enabled: true
+
+      # Connection settings
+      server_uri: ldaps://lldap.auth.svc.cluster.local:636
+      peer_certificate: null
+      start_tls: false
+      sni: false
+
+      # Bind credentials
+      bind_cn: uid=admin,ou=people,dc=house,dc=simonellistonball,dc=com
+      bind_password: "${LLDAP_ADMIN_PASSWORD}"
+
+      # Search settings
+      base_dn: dc=house,dc=simonellistonball,dc=com
+
+      # User settings
+      additional_user_dn: ou=people
+      user_object_filter: (objectClass=person)
+
+      # Group settings
+      additional_group_dn: ou=groups
+      group_object_filter: (objectClass=groupOfUniqueNames)
+      group_membership_field: member
+      object_uniqueness_field: uid
+
+      # Sync settings
+      sync_users: true
+      sync_users_password: false
+      sync_groups: true
+      sync_parent_group: null
+
+      # Property mappings for LLDAP (OpenLDAP-style)
+      user_property_mappings:
+        - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/default-name]]
+        - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/default-mail]]
+        - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-uid]]
+        - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-cn]]
+      group_property_mappings:
+        - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-cn]]

@@ -31,6 +31,33 @@ server:
   ingress:
     enabled: false  # We use Traefik IngressRoute
 
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+
+  # Environment variables for CA trust
+  env:
+    - name: REQUESTS_CA_BUNDLE
+      value: /etc/ssl/certs/ca-certificates.crt
+
+  # Mount custom blueprints and CA bundle
+  volumes:
+    - name: custom-blueprints
+      configMap:
+        name: authentik-blueprints
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  volumeMounts:
+    - name: custom-blueprints
+      mountPath: /blueprints/custom
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+
 worker:
   replicas: 1
   resources:
@@ -41,6 +68,26 @@ worker:
       cpu: "500m"
       memory: "512Mi"
 
+  # Environment variables for CA trust
+  env:
+    - name: REQUESTS_CA_BUNDLE
+      value: /etc/ssl/certs/ca-certificates.crt
+
+  # Mount custom blueprints and CA bundle (worker handles LDAP sync)
+  volumes:
+    - name: custom-blueprints
+      configMap:
+        name: authentik-blueprints
+    - name: ca-bundle
+      configMap:
+        name: simonellistonball-ca-bundle
+  volumeMounts:
+    - name: custom-blueprints
+      mountPath: /blueprints/custom
+    - name: ca-bundle
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+
 # Disable embedded PostgreSQL - we use external
 postgresql:
   enabled: false
@@ -48,13 +95,6 @@ postgresql:
 # Disable embedded Redis - we use existing Redis
 redis:
   enabled: false
-
-# Prometheus metrics
-prometheus:
-  serviceMonitor:
-    create: true
-    labels:
-      release: kube-prometheus-stack
 
 # Email configuration (optional - configure for password resets)
 # authentik:

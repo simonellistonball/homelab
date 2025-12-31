@@ -137,18 +137,20 @@ routes:
 
 ## LLDAP Integration (LDAPS/TLS)
 
-If using LLDAP as your user directory, configure Authentik to sync users over secure LDAPS:
+The LLDAP source is **automatically configured** via blueprint during deployment.
 
-1. **Directory > Federation & Social Logins > Create > LDAP Source**
-2. Configure connection:
-   - Name: `LLDAP`
-   - Server URI: `ldaps://lldap.auth.svc.cluster.local:636`
-   - Enable StartTLS: No (already using LDAPS)
-   - TLS Verification Certificate: (optional - internal CA is trusted via trust-manager)
-   - Bind CN: `uid=admin,ou=people,dc=house,dc=simonellistonball,dc=com`
-   - Bind Password: (from LLDAP_ADMIN_PASSWORD)
-   - Base DN: `dc=house,dc=simonellistonball,dc=com`
-3. Save and click "Sync" to import users
+**Auto-configured settings:**
+- Name: `LLDAP`
+- Server URI: `ldaps://lldap.auth.svc.cluster.local:636`
+- Bind CN: `uid=admin,ou=people,dc=house,dc=simonellistonball,dc=com`
+- Base DN: `dc=house,dc=simonellistonball,dc=com`
+- User sync: enabled
+- Group sync: enabled
+
+**After deployment:**
+1. Go to Directory > Federation & Social Logins
+2. Click on the "LLDAP" source
+3. Click "Sync" to import users from LLDAP
 
 The CA trust bundle (`simonellistonball-ca-bundle`) is automatically distributed to the `auth` namespace for LDAPS verification.
 

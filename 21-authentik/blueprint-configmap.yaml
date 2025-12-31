@@ -1,0 +1,407 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprints
+  namespace: auth
+  labels:
+    app.kubernetes.io/name: authentik
+data:
+  lldap-source.yaml: |
+    # Authentik Blueprint: LLDAP Source Configuration
+    version: 1
+    metadata:
+      name: LLDAP Source
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      - model: authentik_sources_ldap.ldapsource
+        id: lldap-source
+        state: present
+        identifiers:
+          slug: lldap
+        attrs:
+          name: LLDAP
+          slug: lldap
+          enabled: true
+          server_uri: ldaps://lldap.auth.svc.cluster.local:636
+          peer_certificate: null
+          start_tls: false
+          sni: false
+          bind_cn: uid=admin,ou=people,dc=house,dc=simonellistonball,dc=com
+          bind_password: "${LLDAP_ADMIN_PASSWORD}"
+          base_dn: dc=house,dc=simonellistonball,dc=com
+          additional_user_dn: ou=people
+          user_object_filter: (objectClass=person)
+          additional_group_dn: ou=groups
+          group_object_filter: (objectClass=groupOfUniqueNames)
+          group_membership_field: member
+          object_uniqueness_field: uid
+          sync_users: true
+          sync_users_password: false
+          sync_groups: true
+          sync_parent_group: null
+          user_property_mappings:
+            - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/default-name]]
+            - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/default-mail]]
+            - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-uid]]
+            - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-cn]]
+          group_property_mappings:
+            - !Find [authentik_core.propertymapping, [managed, goauthentik.io/sources/ldap/openldap-cn]]
+
+  oidc-apps.yaml: |
+    # Authentik Blueprint: OIDC Applications
+    version: 1
+    metadata:
+      name: OIDC Applications
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      # Grafana
+      - model: authentik_providers_oauth2.oauth2provider
+        id: grafana-provider
+        state: present
+        identifiers:
+          name: grafana
+        attrs:
+          name: grafana
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          client_type: confidential
+          client_id: grafana
+          client_secret: "${AUTHENTIK_GRAFANA_CLIENT_SECRET}"
+          redirect_uris: |
+            https://grafana.apps.house.simonellistonball.com/login/generic_oauth
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+      - model: authentik_core.application
+        id: grafana-app
+        state: present
+        identifiers:
+          slug: grafana
+        attrs:
+          name: Grafana
+          slug: grafana
+          provider: !KeyOf grafana-provider
+          meta_launch_url: https://grafana.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Gitea
+      - model: authentik_providers_oauth2.oauth2provider
+        id: gitea-provider
+        state: present
+        identifiers:
+          name: gitea
+        attrs:
+          name: gitea
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          client_type: confidential
+          client_id: gitea
+          client_secret: "${AUTHENTIK_GITEA_CLIENT_SECRET}"
+          redirect_uris: |
+            https://gitea.apps.house.simonellistonball.com/user/oauth2/authentik/callback
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+      - model: authentik_core.application
+        id: gitea-app
+        state: present
+        identifiers:
+          slug: gitea
+        attrs:
+          name: Gitea
+          slug: gitea
+          provider: !KeyOf gitea-provider
+          meta_launch_url: https://gitea.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Harbor
+      - model: authentik_providers_oauth2.oauth2provider
+        id: harbor-provider
+        state: present
+        identifiers:
+          name: harbor
+        attrs:
+          name: harbor
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          client_type: confidential
+          client_id: harbor
+          client_secret: "${AUTHENTIK_HARBOR_CLIENT_SECRET}"
+          redirect_uris: |
+            https://harbor.apps.house.simonellistonball.com/c/oidc/callback
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+      - model: authentik_core.application
+        id: harbor-app
+        state: present
+        identifiers:
+          slug: harbor
+        attrs:
+          name: Harbor
+          slug: harbor
+          provider: !KeyOf harbor-provider
+          meta_launch_url: https://harbor.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Immich
+      - model: authentik_providers_oauth2.oauth2provider
+        id: immich-provider
+        state: present
+        identifiers:
+          name: immich
+        attrs:
+          name: immich
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          client_type: confidential
+          client_id: immich
+          client_secret: "${AUTHENTIK_IMMICH_CLIENT_SECRET}"
+          redirect_uris: |
+            https://immich.apps.house.simonellistonball.com/auth/login
+            https://immich.apps.house.simonellistonball.com/user-settings
+            app.immich:/
+          signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+          property_mappings:
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+            - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+      - model: authentik_core.application
+        id: immich-app
+        state: present
+        identifiers:
+          slug: immich
+        attrs:
+          name: Immich
+          slug: immich
+          provider: !KeyOf immich-provider
+          meta_launch_url: https://immich.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+  forward-auth-apps.yaml: |
+    # Authentik Blueprint: Forward Auth Applications
+    version: 1
+    metadata:
+      name: Forward Auth Applications
+      labels:
+        blueprints.goauthentik.io/instantiate: "true"
+    entries:
+      # Traefik Dashboard
+      - model: authentik_providers_proxy.proxyprovider
+        id: traefik-provider
+        state: present
+        identifiers:
+          name: traefik
+        attrs:
+          name: traefik
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://traefik.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: traefik-app
+        state: present
+        identifiers:
+          slug: traefik
+        attrs:
+          name: Traefik Dashboard
+          slug: traefik
+          provider: !KeyOf traefik-provider
+          meta_launch_url: https://traefik.apps.house.simonellistonball.com/dashboard/
+          policy_engine_mode: any
+
+      # Prometheus
+      - model: authentik_providers_proxy.proxyprovider
+        id: prometheus-provider
+        state: present
+        identifiers:
+          name: prometheus
+        attrs:
+          name: prometheus
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://prometheus.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: prometheus-app
+        state: present
+        identifiers:
+          slug: prometheus
+        attrs:
+          name: Prometheus
+          slug: prometheus
+          provider: !KeyOf prometheus-provider
+          meta_launch_url: https://prometheus.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Alertmanager
+      - model: authentik_providers_proxy.proxyprovider
+        id: alertmanager-provider
+        state: present
+        identifiers:
+          name: alertmanager
+        attrs:
+          name: alertmanager
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://alertmanager.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: alertmanager-app
+        state: present
+        identifiers:
+          slug: alertmanager
+        attrs:
+          name: Alertmanager
+          slug: alertmanager
+          provider: !KeyOf alertmanager-provider
+          meta_launch_url: https://alertmanager.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Dagster
+      - model: authentik_providers_proxy.proxyprovider
+        id: dagster-provider
+        state: present
+        identifiers:
+          name: dagster
+        attrs:
+          name: dagster
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://dagster.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: dagster-app
+        state: present
+        identifiers:
+          slug: dagster
+        attrs:
+          name: Dagster
+          slug: dagster
+          provider: !KeyOf dagster-provider
+          meta_launch_url: https://dagster.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # Redpanda Console
+      - model: authentik_providers_proxy.proxyprovider
+        id: redpanda-provider
+        state: present
+        identifiers:
+          name: redpanda
+        attrs:
+          name: redpanda
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://redpanda.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: redpanda-app
+        state: present
+        identifiers:
+          slug: redpanda
+        attrs:
+          name: Redpanda Console
+          slug: redpanda
+          provider: !KeyOf redpanda-provider
+          meta_launch_url: https://redpanda.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # n8n
+      - model: authentik_providers_proxy.proxyprovider
+        id: n8n-provider
+        state: present
+        identifiers:
+          name: n8n
+        attrs:
+          name: n8n
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://n8n.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: n8n-app
+        state: present
+        identifiers:
+          slug: n8n
+        attrs:
+          name: n8n
+          slug: n8n
+          provider: !KeyOf n8n-provider
+          meta_launch_url: https://n8n.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # SeaweedFS Filer
+      - model: authentik_providers_proxy.proxyprovider
+        id: seaweedfs-provider
+        state: present
+        identifiers:
+          name: seaweedfs
+        attrs:
+          name: seaweedfs
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://seaweedfs.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: seaweedfs-app
+        state: present
+        identifiers:
+          slug: seaweedfs
+        attrs:
+          name: SeaweedFS Filer
+          slug: seaweedfs
+          provider: !KeyOf seaweedfs-provider
+          meta_launch_url: https://seaweedfs.apps.house.simonellistonball.com
+          policy_engine_mode: any
+
+      # CouchDB
+      - model: authentik_providers_proxy.proxyprovider
+        id: couchdb-provider
+        state: present
+        identifiers:
+          name: couchdb
+        attrs:
+          name: couchdb
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://couchdb.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: couchdb-app
+        state: present
+        identifiers:
+          slug: couchdb
+        attrs:
+          name: CouchDB
+          slug: couchdb
+          provider: !KeyOf couchdb-provider
+          meta_launch_url: https://couchdb.apps.house.simonellistonball.com/_utils/
+          policy_engine_mode: any
+
+      # Qdrant
+      - model: authentik_providers_proxy.proxyprovider
+        id: qdrant-provider
+        state: present
+        identifiers:
+          name: qdrant
+        attrs:
+          name: qdrant
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+          mode: forward_single
+          external_host: https://qdrant.apps.house.simonellistonball.com
+      - model: authentik_core.application
+        id: qdrant-app
+        state: present
+        identifiers:
+          slug: qdrant
+        attrs:
+          name: Qdrant
+          slug: qdrant
+          provider: !KeyOf qdrant-provider
+          meta_launch_url: https://qdrant.apps.house.simonellistonball.com/dashboard
+          policy_engine_mode: any
