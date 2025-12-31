@@ -49,6 +49,12 @@ ports:
     protocol: TCP
     tls:
       enabled: true
+    # Extended timeouts for large uploads (20GB+)
+    transport:
+      respondingTimeouts:
+        readTimeout: 21600s   # 6 hours
+        writeTimeout: 21600s  # 6 hours
+        idleTimeout: 900s     # 15 minutes
 
 providers:
   kubernetesCRD:
